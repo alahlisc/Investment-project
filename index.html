@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>لوحة تحكم المشروع الاستثماري - النادي الأهلي</title>
+  <title>منظومة المشروع الاستثماري - النادي الأهلي طرابلس</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -227,6 +227,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
     }
     
     .chart-title {
@@ -341,6 +343,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
     }
     
     .table-title {
@@ -561,7 +565,7 @@
     <header>
       <div class="logo">
         <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/5/5e/Al-Ahly_SC_logo.svg/1200px-Al-Ahly_SC_logo.svg.png" alt="شعار النادي الأهلي">
-        <h1>لوحة تحكم المشروع الاستثماري - النادي الأهلي</h1>
+        <h1>منظومة المشروع الاستثماري - النادي الأهلي طرابلس</h1>
       </div>
       <div class="header-actions">
         <button class="header-btn" onclick="exportToExcel()">
@@ -572,6 +576,9 @@
         </button>
         <button class="header-btn" id="refreshData">
           <span>🔄</span> تحديث البيانات
+        </button>
+        <button class="header-btn" id="loginBtn" style="display:none;">
+          <span>🔐</span> تسجيل الدخول
         </button>
       </div>
     </header>
@@ -864,7 +871,7 @@
         <div class="stats-cards">
           <div class="card">
             <div class="card-header">
-              <div class="card-label">الإيراد الشهري الحالي</div>
+              <div class="card-label">الإيراد الشهрий الحالي</div>
               <div class="card-icon">💰</div>
             </div>
             <div class="card-value" id="currentMonthlyRevenue">0</div>
@@ -958,7 +965,7 @@
         
         <div class="filter-item">
           <label for="annualSearch">بحث:</label>
-          <input type="text" id="annualSearch" placeholder="ابحق برقم المحل أو اسم المستأجر">
+          <input type="text" id="annualSearch" placeholder="ابحث برقم المحل أو اسم المستأجر">
         </div>
       </div>
       
@@ -1085,7 +1092,7 @@
           { id: 10, phase: 2, name: "فرج احمد الحراري", rent: 1000, status: "paid", lastPayment: "2024-12-31", area: 30 },
           { id: 11, phase: 2, name: "الزبير محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-08-15", area: 32 },
           { id: 12, phase: 2, name: "وليد محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-07-20", area: 32 },
-          { id: 13, phase: 1, name: "وجدي محمد", rent: 1250, status: "review", lastPayment: "2024-09-10", area: 33 },
+          { id: 13, phase: 1, name: "وجди محمد", rent: 1250, status: "review", lastPayment: "2024-09-10", area: 33 },
           { id: 14, phase: 2, name: "محمد صالح الجهاني", rent: 1500, status: "unpaid", lastPayment: "2024-06-30", area: 35 },
           { id: 15, phase: 2, name: "عبد الناصر محمد عياد", rent: 1000, status: "unpaid", lastPayment: "2024-05-31", area: 30 },
           { id: 16, phase: 2, name: "عبد الناصر محمد عياد", rent: 1500, status: "unpaid", lastPayment: "2024-05-31", area: 35 },
