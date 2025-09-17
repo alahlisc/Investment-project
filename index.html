@@ -3,23 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>منظومة المشروع الاستثماري - النادي الأهلي طرابلس</title>
+  <title>لوحة تحكم المشروع الاستثماري - النادي الأهلي</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary-color: #006400;
-      --secondary-color: gold;
+      --primary-light: #4caf50;
+      --secondary-color: #d4af37;
       --accent-color: #0a3d62;
-      --light-bg: #f5f7fa;
+      --light-bg: #f8f9fa;
       --card-bg: #fff;
-      --success-color: #10b981;
-      --warning-color: #f59e0b;
-      --danger-color: #ef4444;
-      --text-color: #333;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --text-color: #2c3e50;
+      --text-light: #7f8c8d;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --info-color: #3498db;
+      --purple-color: #9b59b6;
+      --border-radius: 10px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
     }
     
     * {
@@ -33,24 +39,41 @@
       background-color: var(--light-bg);
       color: var(--text-color);
       line-height: 1.6;
-      padding: 20px;
     }
     
     .container {
-      max-width: 1400px;
+      max-width: 1800px;
       margin: 0 auto;
+      padding: 20px;
     }
     
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 25px;
-      padding: 15px 20px;
+      margin-bottom: 30px;
+      padding: 20px;
       background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
       color: white;
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
+      position: relative;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: var(--danger-color);
+      color: white;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      cursor: pointer;
     }
     
     .logo {
@@ -86,7 +109,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.3s;
+      transition: var(--transition);
       font-family: 'Cairo', sans-serif;
       font-weight: 600;
     }
@@ -101,17 +124,19 @@
       background: white;
       border-radius: var(--border-radius);
       overflow: hidden;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
       box-shadow: var(--box-shadow);
+      flex-wrap: wrap;
     }
     
     .nav-tab {
       padding: 16px 20px;
       cursor: pointer;
       background: #f8fafc;
-      transition: all 0.3s;
+      transition: var(--transition);
       text-align: center;
       flex: 1;
+      min-width: 150px;
       font-weight: 600;
       border-bottom: 3px solid transparent;
     }
@@ -140,6 +165,15 @@
       display: block;
     }
     
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+    
+    /* بطاقات الإحصائيات */
     .stats-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -155,16 +189,19 @@
       position: relative;
       overflow: hidden;
       border-top: 4px solid var(--primary-color);
-      transition: transform 0.3s;
+      transition: var(--transition);
     }
     
     .card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
     
     .card.success { border-top-color: var(--success-color); }
     .card.warning { border-top-color: var(--warning-color); }
     .card.danger { border-top-color: var(--danger-color); }
+    .card.info { border-top-color: var(--info-color); }
+    .card.purple { border-top-color: var(--purple-color); }
     
     .card-header {
       display: flex;
@@ -208,131 +245,72 @@
     .card-change.positive { color: var(--success-color); }
     .card-change.negative { color: var(--danger-color); }
     
-    .charts-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+    /* نظام الواصل المالي */
+    .payment-container {
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
       margin-bottom: 30px;
     }
     
-    .chart-card {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      box-shadow: var(--box-shadow);
+    .payment-timeline {
+      position: relative;
+      margin: 20px 0;
+      padding-right: 30px;
     }
     
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .payment-timeline::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: #ddd;
+    }
+    
+    .payment-event {
+      position: relative;
       margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 15px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      border-right: 3px solid var(--primary-color);
     }
     
-    .chart-title {
+    .payment-event::before {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 15px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+    }
+    
+    .payment-date {
+      font-weight: 600;
       color: var(--accent-color);
-      font-size: 1.2em;
-      font-weight: 700;
-    }
-    
-    .chart-filter {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      font-family: 'Cairo', sans-serif;
-      background-color: var(--light-bg);
-    }
-    
-    /* تصنيف المستأجرين */
-    .tenant-categories {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .category-card {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      box-shadow: var(--box-shadow);
-    }
-    
-    .category-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .category-title {
-      font-size: 1.2em;
-      font-weight: 700;
-    }
-    
-    .category-title.completed { color: var(--success-color); }
-    .category-title.incomplete { color: var(--warning-color); }
-    .category-title.review { color: var(--danger-color); }
-    
-    .category-count {
-      background-color: var(--light-bg);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    
-    .tenant-list {
-      max-height: 350px;
-      overflow-y: auto;
-    }
-    
-    .tenant-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    
-    .tenant-item:last-child {
-      border-bottom: none;
-    }
-    
-    .tenant-info {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .tenant-name {
-      font-weight: 600;
       margin-bottom: 5px;
     }
     
-    .tenant-details {
-      font-size: 0.85rem;
-      color: #64748b;
+    .payment-details {
+      display: flex;
+      justify-content: space-between;
     }
     
-    .tenant-status {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .payment-amount {
       font-weight: 600;
+      color: var(--success-color);
     }
-    
-    .status-completed { background-color: #dcfce7; color: var(--success-color); }
-    .status-incomplete { background-color: #fef3c7; color: var(--warning-color); }
-    .status-review { background-color: #fee2e2; color: var(--danger-color); }
     
     /* الجداول */
     .table-container {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
+      background: white;
       padding: 20px;
+      border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
       margin-bottom: 30px;
       overflow-x: auto;
@@ -343,8 +321,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e2e8f0;
     }
     
     .table-title {
@@ -353,17 +329,41 @@
       font-weight: 700;
     }
     
-    .table-filters {
+    .table-actions {
       display: flex;
       gap: 15px;
     }
     
-    .table-filter {
+    .search-box {
+      position: relative;
+    }
+    
+    .search-input {
       padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      padding-left: 35px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
       font-family: 'Cairo', sans-serif;
-      background-color: var(--light-bg);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+    
+    .filter-btn {
+      background: var(--light-bg);
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Cairo', sans-serif;
     }
     
     table {
@@ -387,100 +387,73 @@
       background-color: #f8fafc;
     }
     
-    /* عناصر أخرى */
-    .filters {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    
-    .filter-item {
-      background: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .filter-item label {
-      margin-left: 8px;
+    .invoice-status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8em;
       font-weight: 600;
     }
     
-    .filter-item select, .filter-item input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-family: 'Cairo', sans-serif;
-    }
+    .status-paid { background-color: #e8f5e9; color: var(--success-color); }
+    .status-pending { background-color: #ffecb3; color: var(--warning-color); }
+    .status-overdue { background-color: #ffcdd2; color: var(--danger-color); }
     
-    .shop-details {
+    /* طباعة الواصل */
+    .receipt {
+      display: none;
       background: white;
       padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 20px;
+      border: 2px solid #000;
+      max-width: 600px;
+      margin: 20px auto;
     }
     
-    .payment-history {
-      margin-top: 20px;
-    }
-    
-    .payment-months {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin-top: 15px;
-    }
-    
-    .payment-month {
-      background: #f1f5f9;
-      padding: 10px;
-      border-radius: 8px;
+    .receipt-header {
       text-align: center;
-      font-size: 0.9em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
     }
     
-    .payment-month.paid {
-      background: #dcfce7;
-      color: var(--success-color);
-      font-weight: 600;
-    }
-    
-    .payment-month.unpaid {
-      background: #fee2e2;
-      color: var(--danger-color);
-      font-weight: 600;
-    }
-    
-    .prediction-card {
-      background: white;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
+    .receipt-details {
       margin-bottom: 20px;
     }
     
-    .prediction-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
     
-    /* عناصر جديدة */
-    .loading {
+    .receipt-footer {
+      text-align: center;
+      margin-top: 30px;
+      border-top: 1px dashed #000;
+      padding-top: 10px;
+    }
+    
+    /* مؤشر التحميل */
+    .loading-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      z-index: 9999;
+      flex-direction: column;
     }
     
     .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--primary-color);
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary-color);
       border-radius: 50%;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
     }
     
@@ -489,28 +462,14 @@
       100% { transform: rotate(360deg); }
     }
     
-    .no-data {
-      text-align: center;
-      padding: 20px;
-      color: #64748b;
-    }
-    
-    .rent-distribution {
-      margin-top: 30px;
-    }
-    
     /* التجاوب مع أحجام الشاشات */
     @media (max-width: 1200px) {
-      .charts-container {
-        grid-template-columns: 1fr;
+      .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
     
     @media (max-width: 992px) {
-      .tenant-categories {
-        grid-template-columns: 1fr;
-      }
-      
       header {
         flex-direction: column;
         text-align: center;
@@ -520,28 +479,19 @@
       .header-actions {
         justify-content: center;
       }
-    }
-    
-    @media (max-width: 768px) {
+      
       .nav-tabs {
         flex-direction: column;
       }
-      
+    }
+    
+    @media (max-width: 768px) {
       .stats-cards {
         grid-template-columns: 1fr;
       }
       
-      .payment-months {
-        grid-template-columns: repeat(4, 1fr);
-      }
-      
-      .filters, .table-filters {
+      .table-actions {
         flex-direction: column;
-      }
-      
-      .table-header {
-        flex-direction: column;
-        gap: 15px;
       }
     }
     
@@ -553,32 +503,31 @@
       .card-value {
         font-size: 1.8rem;
       }
-      
-      .payment-months {
-        grid-template-columns: repeat(3, 1fr);
-      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="loading-indicator" id="loadingIndicator">
+    <div class="loading-spinner"></div>
+    <p style="margin-top: 20px;">جاري تحميل البيانات...</p>
+  </div>
+
+  <div class="container" style="display: none;" id="mainContent">
     <header>
+      <div class="notification-badge" onclick="showNotifications()">3</div>
       <div class="logo">
         <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/5/5e/Al-Ahly_SC_logo.svg/1200px-Al-Ahly_SC_logo.svg.png" alt="شعار النادي الأهلي">
-        <h1>منظومة المشروع الاستثماري - النادي الأهلي طرابلس</h1>
+        <h1>لوحة تحكم المشروع الاستثماري - النادي الأهلي</h1>
       </div>
       <div class="header-actions">
         <button class="header-btn" onclick="exportToExcel()">
-          <span>📥</span> تصدير Excel
+          <i class="fas fa-download"></i> تصدير Excel
         </button>
         <button class="header-btn" onclick="window.print()">
-          <span>🖨️</span> طباعة
+          <i class="fas fa-print"></i> طباعة
         </button>
-        <button class="header-btn" id="refreshData">
-          <span>🔄</span> تحديث البيانات
-        </button>
-        <button class="header-btn" id="loginBtn" style="display:none;">
-          <span>🔐</span> تسجيل الدخول
+        <button class="header-btn" onclick="refreshData()">
+          <i class="fas fa-sync-alt"></i> تحديث
         </button>
       </div>
     </header>
@@ -587,191 +536,103 @@
       <div class="nav-tab active" data-tab="dashboard">لوحة التحكم الرئيسية</div>
       <div class="nav-tab" data-tab="shops">إدارة المحلات</div>
       <div class="nav-tab" data-tab="tenants">تصنيف المستأجرين</div>
+      <div class="nav-tab" data-tab="payments">الواصل المالي</div>
       <div class="nav-tab" data-tab="prediction">تنبؤ الإيرادات</div>
       <div class="nav-tab" data-tab="annual">الجرد السنوي</div>
     </div>
 
     <!-- لوحة التحكم الرئيسية -->
     <div class="tab-content active" id="dashboard">
+      <h2 class="section-title">نظرة عامة على المشروع</h2>
+      
       <div class="stats-cards">
         <div class="card">
           <div class="card-header">
             <div class="card-label">إجمالي المحلات</div>
-            <div class="card-icon">🏪</div>
+            <div class="card-icon"><i class="fas fa-store"></i></div>
           </div>
-          <div class="card-value" id="totalShops">0</div>
-          <div class="card-change" id="totalArea">0 متر مربع</div>
+          <div class="card-value">64</div>
+          <div class="card-change">من أصل 80 محل</div>
         </div>
         
         <div class="card success">
           <div class="card-header">
             <div class="card-label">المحلات المستوفية</div>
-            <div class="card-icon">✓</div>
+            <div class="card-icon"><i class="fas fa-check-circle"></i></div>
           </div>
-          <div class="card-value" id="completedShops">0</div>
-          <div class="card-change positive" id="completedPercentage">0%</div>
+          <div class="card-value">64</div>
+          <div class="card-change positive">100%</div>
         </div>
         
         <div class="card warning">
           <div class="card-header">
             <div class="card-label">المحلات غير المستوفية</div>
-            <div class="card-icon">⚠️</div>
+            <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
           </div>
-          <div class="card-value" id="incompleteShops">0</div>
-          <div class="card-change" id="incompletePercentage">0%</div>
-        </div>
-        
-        <div class="card danger">
-          <div class="card-header">
-            <div class="card-label">المحلات تحت المراجعة</div>
-            <div class="card-icon">🔍</div>
-          </div>
-          <div class="card-value" id="reviewShops">0</div>
-          <div class="card-change" id="reviewPercentage">0%</div>
+          <div class="card-value">19</div>
+          <div class="card-change">تحت المراجعة</div>
         </div>
         
         <div class="card">
           <div class="card-header">
             <div class="card-label">إجمالي الإيرادات</div>
-            <div class="card-icon">💰</div>
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          <div class="card-value" id="totalRevenue">0</div>
+          <div class="card-value">97,500</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
-        <div class="card success">
-          <div class="card-header">
-            <div class="card-label">المستوفين للدفع</div>
-            <div class="card-icon">✅</div>
-          </div>
-          <div class="card-value" id="paidShops">0</div>
-          <div class="card-change positive" id="paidPercentage">0% من المحلات</div>
-        </div>
-        
-        <div class="card warning">
-          <div class="card-header">
-            <div class="card-label">المتأخرين عن الدفع</div>
-            <div class="card-icon">⏰</div>
-          </div>
-          <div class="card-value" id="unpaidShops">0</div>
-          <div class="card-change" id="unpaidPercentage">0% من المحلات</div>
-        </div>
-        
-        <div class="card">
+        <div class="card info">
           <div class="card-header">
             <div class="card-label">متوسط الإيجار الشهري</div>
-            <div class="card-icon">📊</div>
+            <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
           </div>
-          <div class="card-value" id="avgRent">0</div>
+          <div class="card-value">1,218</div>
           <div class="card-change">دينار ليبي</div>
         </div>
-      </div>
-      
-      <div class="charts-container">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">مقارنة الإيرادات حسب المرحلة</div>
-            <select class="chart-filter" id="phaseChartFilter">
-              <option>جميع المراحل</option>
-              <option>المرحلة 1</option>
-              <option>المرحلة 2</option>
-            </select>
-          </div>
-          <canvas id="phaseComparisonChart"></canvas>
-        </div>
         
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">توزيع المحلات حسب حالة الدفع</div>
-            <select class="chart-filter" id="paymentChartFilter">
-              <option>جميع الحالات</option>
-              <option>المستوفين</option>
-              <option>غير المستوفين</option>
-              <option>تحت المراجعة</option>
-            </select>
+        <div class="card purple">
+          <div class="card-header">
+            <div class="card-label">صافي الربح</div>
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
           </div>
-          <canvas id="paymentStatusChart"></canvas>
+          <div class="card-value">55,200</div>
+          <div class="card-change positive">دينار ليبي</div>
         </div>
       </div>
       
-      <div class="chart-card">
+      <div class="chart-container" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 30px;">
         <div class="chart-header">
-          <div class="chart-title">الإيرادات الشهرية للمشروع</div>
-          <select class="chart-filter" id="monthlyChartFilter">
-            <option>2024</option>
-            <option>2023</option>
-            <option>2022</option>
-          </select>
+          <h3 class="table-title">توزيع المحلات حسب حالة الدفع</h3>
         </div>
-        <canvas id="monthlyRevenueChart"></canvas>
+        <canvas id="paymentChart" height="100"></canvas>
       </div>
     </div>
 
     <!-- إدارة المحلات -->
     <div class="tab-content" id="shops">
-      <div class="filters">
-        <div class="filter-item">
-          <label for="phaseFilter">المرحلة:</label>
-          <select id="phaseFilter">
-            <option value="all">الكل</option>
-            <option value="1">المرحلة 1</option>
-            <option value="2">المرحلة 2</option>
-          </select>
-        </div>
-        
-        <div class="filter-item">
-          <label for="paymentFilter">حالة الدفع:</label>
-          <select id="paymentFilter">
-            <option value="all">الكل</option>
-            <option value="paid">مسدد</option>
-            <option value="unpaid">غير مسدد</option>
-            <option value="review">قيد المراجعة</option>
-          </select>
-        </div>
-        
-        <div class="filter-item">
-          <label for="shopFilter">بحث:</label>
-          <input type="text" id="shopFilter" placeholder="ابحث برقم المحل أو اسم المستأجر">
-        </div>
-        
-        <div class="filter-item">
-          <label for="rentFilter">نطاق الإيجار:</label>
-          <select id="rentFilter">
-            <option value="all">الكل</option>
-            <option value="0-1000">أقل من 1000 د.ل</option>
-            <option value="1000-1500">1000 - 1500 د.ل</option>
-            <option value="1500+">أكثر من 1500 د.ل</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">توزيع قيم الإيجارات</div>
-        </div>
-        <canvas id="rentDistributionChart"></canvas>
-      </div>
+      <h2 class="section-title">إدارة المحلات</h2>
       
       <div class="table-container">
         <div class="table-header">
-          <div class="table-title">قائمة المحلات</div>
-          <div class="table-filters">
-            <select class="table-filter" id="sortBy">
-              <option value="id">ترتيب حسب رقم المحل</option>
-              <option value="rent">ترتيب حسب قيمة الإيجار</option>
-              <option value="name">ترتيب حسب الاسم</option>
-            </select>
-            <select class="table-filter" id="sortOrder">
-              <option value="asc">تصاعدي</option>
-              <option value="desc">تنازلي</option>
-            </select>
+          <h3 class="table-title">قائمة المحلات</h3>
+          <div class="table-actions">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر...">
+            </div>
+            <button class="filter-btn">
+              <i class="fas fa-filter"></i> تصفية
+            </button>
           </div>
         </div>
-        <table id="shopsTable">
+        
+        <table class="data-table">
           <thead>
             <tr>
               <th>رقم المحل</th>
               <th>المرحلة</th>
+              <th>الدور</th>
               <th>المستأجر</th>
               <th>قيمة الإيجار</th>
               <th>حالة الدفع</th>
@@ -780,251 +641,253 @@
             </tr>
           </thead>
           <tbody>
-            <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
+            <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
-        <div id="shopsLoading" class="loading">
-          <div class="loading-spinner"></div>
-        </div>
-        <div id="noShopsData" class="no-data" style="display: none;">
-          لا توجد بيانات مطابقة لعوامل التصفية المحددة
-        </div>
-      </div>
-      
-      <div id="shopDetails" style="display: none;">
-        <div class="shop-details">
-          <h3>تفاصيل المحل: <span id="detailShopNumber"></span></h3>
-          <p>المستأجر: <span id="detailTenant"></span></p>
-          <p>المرحلة: <span id="detailPhase"></span></p>
-          <p>قيمة الإيجار: <span id="detailRent"></span> دينار/شهر</p>
-          <p>حالة الدفع: <span id="detailPaymentStatus"></span></p>
-          <p>تاريخ آخر سداد: <span id="detailLastPayment"></span></p>
-          
-          <div class="payment-history">
-            <h4>سجل الدفع للسنة الحالية</h4>
-            <div class="payment-months" id="paymentMonths">
-              <!-- سيتم ملء هذا القسم بالبيانات من JavaScript -->
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
     <!-- تصنيف المستأجرين -->
     <div class="tab-content" id="tenants">
-      <div class="filters">
-        <div class="filter-item">
-          <label for="tenantCategoryFilter">التصنيف:</label>
-          <select id="tenantCategoryFilter">
-            <option value="all">الكل</option>
-            <option value="completed">المكتملين</option>
-            <option value="incomplete">غير المكتملين</option>
-            <option value="review">تحت المراجعة</option>
-          </select>
+      <h2 class="section-title">تصنيف المستأجرين</h2>
+      
+      <div class="stats-cards">
+        <div class="card success">
+          <div class="card-header">
+            <div class="card-label">المستأجرين المكتملين</div>
+            <div class="card-icon"><i class="fas fa-check-circle"></i></div>
+          </div>
+          <div class="card-value">64</div>
+          <div class="card-change positive">80% من إجمالي المستأجرين</div>
         </div>
         
-        <div class="filter-item">
-          <label for="tenantSearch">بحث:</label>
-          <input type="text" id="tenantSearch" placeholder="ابحث باسم المستأجر">
+        <div class="card warning">
+          <div class="card-header">
+            <div class="card-label">المستأجرين غير المكتملين</div>
+            <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          </div>
+          <div class="card-value">19</div>
+          <div class="card-change">20% من إجمالي المستأجرين</div>
+        </div>
+        
+        <div class="card danger">
+          <div class="card-header">
+            <div class="card-label">المستأجرين تحت المراجعة</div>
+            <div class="card-icon"><i class="fas fa-search"></i></div>
+          </div>
+          <div class="card-value">17</div>
+          <div class="card-change">17% من إجمالي المستأجرين</div>
         </div>
       </div>
       
-      <div class="tenant-categories">
-        <div class="category-card">
-          <div class="category-header">
-            <div class="category-title completed">المستأجرين المكتملين</div>
-            <div class="category-count">0</div>
-          </div>
-          <div class="tenant-list" id="completedTenants">
-            <!-- سيتم ملء هذه القائمة بالبيانات من JavaScript -->
-          </div>
-        </div>
-        
-        <div class="category-card">
-          <div class="category-header">
-            <div class="category-title incomplete">المستأجرين غير المكتملين</div>
-            <div class="category-count">0</div>
-          </div>
-          <div class="tenant-list" id="incompleteTenants">
-            <!-- سيتم ملء هذه القائمة بالبيانات من JavaScript -->
+      <div class="table-container">
+        <div class="table-header">
+          <h3 class="table-title">المستأجرين المكتملين</h3>
+          <div class="table-actions">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="search-input" placeholder="ابحث باسم المستأجر...">
+            </div>
+            <button class="filter-btn">
+              <i class="fas fa-filter"></i> تصفية
+            </button>
           </div>
         </div>
         
-        <div class="category-card">
-          <div class="category-header">
-            <div class="category-title review">المستأجرين تحت المراجعة</div>
-            <div class="category-count">0</div>
-          </div>
-          <div class="tenant-list" id="reviewTenants">
-            <!-- سيتم ملء هذه القائمة بالبيانات من JavaScript -->
-          </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>اسم المستأجر</th>
+              <th>رقم المحل</th>
+              <th>المرحلة</th>
+              <th>قيمة الإيجار</th>
+              <th>مقدم العقد</th>
+              <th>تاريخ بداية العقد</th>
+              <th>تاريخ نهاية العقد</th>
+              <th>حالة الدفع</th>
+              <th>الواصل المالي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- سيتم ملء هذا القسم بالبيانات -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- الواصل المالي -->
+    <div class="tab-content" id="payments">
+      <h2 class="section-title">الواصل المالي</h2>
+      
+      <div class="payment-container">
+        <h3>السجل المالي للمحل رقم <span id="paymentShopNumber">1</span> - <span id="paymentTenantName">محمد احمد أبو شعالة</span></h3>
+        
+        <div class="payment-timeline" id="paymentTimeline">
+          <!-- سيتم ملء هذا القسم بالبيانات -->
+        </div>
+        
+        <div class="summary-item">
+          <span class="summary-label">الإجمالي المدفوع:</span>
+          <span class="summary-value" id="totalPaid">0 د.ل</span>
+        </div>
+        
+        <div class="summary-item">
+          <span class="summary-label">المتبقي:</span>
+          <span class="summary-value" id="remainingAmount">0 د.ل</span>
+        </div>
+        
+        <div class="summary-item">
+          <span class="summary-label">حالة الدفع:</span>
+          <span class="summary-value" id="paymentStatus"><span class="invoice-status status-paid">مكتمل</span></span>
+        </div>
+        
+        <div class="payment-actions" style="margin-top: 20px;">
+          <button class="header-btn" onclick="printReceipt()">
+            <i class="fas fa-print"></i> طباعة الواصل
+          </button>
         </div>
       </div>
     </div>
 
     <!-- تنبؤ الإيرادات -->
     <div class="tab-content" id="prediction">
-      <div class="prediction-card">
-        <h3>تنبؤ الإيرادات في حالة زيادة الإيجار 100%</h3>
-        <p>هذه الشاشة تظهر توقع الإيرادات في حالة تطبيق زيادة بنسبة 100% على إيجار جميع المحلات.</p>
-        
-        <div class="stats-cards">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-label">الإيراد الشهрий الحالي</div>
-              <div class="card-icon">💰</div>
-            </div>
-            <div class="card-value" id="currentMonthlyRevenue">0</div>
-            <div class="card-change">دينار ليبي</div>
+      <h2 class="section-title">تنبؤ الإيرادات</h2>
+      
+      <div class="stats-cards">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-label">الإيراد الشهري الحالي</div>
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          
-          <div class="card success">
-            <div class="card-header">
-              <div class="card-label">الإيراد الشهري المتوقع بعد الزيادة</div>
-              <div class="card-icon">📈</div>
-            </div>
-            <div class="card-value" id="predictedMonthlyRevenue">0</div>
-            <div class="card-change positive">دينار ليبي</div>
-          </div>
-          
-          <div class="card">
-            <div class="card-header">
-              <div class="card-label">الزيادة السنوية المتوقعة</div>
-              <div class="card-icon">💹</div>
-            </div>
-            <div class="card-value" id="predictedAnnualIncrease">0</div>
-            <div class="card-change positive">دينار ليبي</div>
-          </div>
+          <div class="card-value">97,500</div>
+          <div class="card-change">دينار ليبي</div>
         </div>
         
-        <div class="table-container">
-          <table class="prediction-table">
-            <thead>
-              <tr>
-                <th>المرحلة</th>
-                <th>عدد المحلات</th>
-                <th>الإيجار الحالي (شهري)</th>
-                <th>الإيجار بعد الزيادة (شهري)</th>
-                <th>الفرق</th>
-              </tr>
-            </thead>
-            <tbody id="predictionTableBody">
-              <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
-            </tbody>
-          </table>
+        <div class="card success">
+          <div class="card-header">
+            <div class="card-label">الإيراد الشهري المتوقع بعد الزيادة</div>
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+          </div>
+          <div class="card-value">195,000</div>
+          <div class="card-change positive">دينار ليبي</div>
+        </div>
+        
+        <div class="card info">
+          <div class="card-header">
+            <div class="card-label">الزيادة السنوية المتوقعة</div>
+            <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+          </div>
+          <div class="card-value">1,170,000</div>
+          <div class="card-change positive">دينار ليبي</div>
         </div>
       </div>
       
-      <div class="charts-container">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">مقارنة الإيرادات قبل وبعد الزيادة</div>
-          </div>
-          <canvas id="predictionChart"></canvas>
+      <div class="table-container">
+        <div class="table-header">
+          <h3 class="table-title">مقارنة الإيرادات قبل وبعد زيادة 100%</h3>
         </div>
         
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-title">تأثير الزيادة على الإيرادات السنوية</div>
-          </div>
-          <canvas id="annualPredictionChart"></canvas>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>المرحلة</th>
+              <th>عدد المحلات</th>
+              <th>الإيجار الحالي (شهري)</th>
+              <th>الإيجار بعد الزيادة (شهري)</th>
+              <th>الفرق</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>المرحلة 1</td>
+              <td>50</td>
+              <td>60,000 د.ل</td>
+              <td>120,000 د.ل</td>
+              <td style="color: var(--success-color); font-weight: 600;">+60,000 د.ل</td>
+            </tr>
+            <tr>
+              <td>المرحلة 2</td>
+              <td>50</td>
+              <td>37,500 د.ل</td>
+              <td>75,000 د.ل</td>
+              <td style="color: var(--success-color); font-weight: 600;">+37,500 د.ل</td>
+            </tr>
+            <tr>
+              <td>المجموع</td>
+              <td>100</td>
+              <td>97,500 د.ل</td>
+              <td>195,000 د.ل</td>
+              <td style="color: var(--success-color); font-weight: 600;">+97,500 د.ل</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="chart-container" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-top: 20px;">
+        <div class="chart-header">
+          <h3 class="table-title">مقارنة الإيرادات قبل وبعد الزيادة</h3>
         </div>
+        <canvas id="predictionChart" height="100"></canvas>
       </div>
     </div>
 
     <!-- الجرد السنوي -->
     <div class="tab-content" id="annual">
-      <div class="filters">
-        <div class="filter-item">
-          <label for="yearFilter">السنة:</label>
-          <select id="yearFilter">
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-          </select>
-        </div>
-        
-        <div class="filter-item">
-          <label for="annualPhaseFilter">المرحلة:</label>
-          <select id="annualPhaseFilter">
-            <option value="all">الكل</option>
-            <option value="1">المرحلة 1</option>
-            <option value="2">المرحلة 2</option>
-          </select>
-        </div>
-        
-        <div class="filter-item">
-          <label for="annualStatusFilter">حالة الدفع:</label>
-          <select id="annualStatusFilter">
-            <option value="all">الكل</option>
-            <option value="paid">مسدد</option>
-            <option value="unpaid">غير مسدد</option>
-            <option value="review">قيد المراجعة</option>
-          </select>
-        </div>
-        
-        <div class="filter-item">
-          <label for="annualSearch">بحث:</label>
-          <input type="text" id="annualSearch" placeholder="ابحث برقم المحل أو اسم المستأجر">
-        </div>
-      </div>
+      <h2 class="section-title">الجرد السنوي</h2>
       
       <div class="stats-cards">
         <div class="card">
           <div class="card-header">
             <div class="card-label">إجمالي الإيرادات السنوية</div>
-            <div class="card-icon">💰</div>
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          <div class="card-value" id="annualRevenue">0</div>
+          <div class="card-value">1,170,000</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
         <div class="card">
           <div class="card-header">
             <div class="card-label">إجمالي المحلات</div>
-            <div class="card-icon">🏪</div>
+            <div class="card-icon"><i class="fas fa-store"></i></div>
           </div>
-          <div class="card-value" id="annualTotalShops">0</div>
+          <div class="card-value">80</div>
           <div class="card-change">محل</div>
         </div>
         
         <div class="card">
           <div class="card-header">
             <div class="card-label">متوسط الإيجار الشهري</div>
-            <div class="card-icon">📊</div>
+            <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
           </div>
-          <div class="card-value" id="annualAvgRent">0</div>
+          <div class="card-value">1,218</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
         <div class="card success">
           <div class="card-header">
             <div class="card-label">نسبة الإشغال</div>
-            <div class="card-icon">📈</div>
+            <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
           </div>
-          <div class="card-value" id="occupancyRate">0%</div>
-          <div class="card-change positive" id="occupancyCount">0 من 0 محل</div>
+          <div class="card-value">81.25%</div>
+          <div class="card-change positive">65 من 80 محل</div>
         </div>
       </div>
       
       <div class="table-container">
         <div class="table-header">
-          <div class="table-title">التقرير السنوي</div>
-          <div class="table-filters">
-            <select class="table-filter" id="annualSortBy">
-              <option value="id">ترتيب حسب رقم المحل</option>
-              <option value="rent">ترتيب حسب قيمة الإيجار</option>
-              <option value="annualRent">ترتيب حسب الإيجار السنوي</option>
-              <option value="paid">ترتيب حسب المدفوع</option>
-              <option value="remaining">ترتيب حسب المتبقي</option>
-            </select>
-            <select class="table-filter" id="annualSortOrder">
-              <option value="asc">تصاعدي</option>
-              <option value="desc">تنازلي</option>
-            </select>
+          <h3 class="table-title">التقرير السنوي 2024</h3>
+          <div class="table-actions">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر...">
+            </div>
+            <button class="filter-btn">
+              <i class="fas fa-filter"></i> تصفية
+            </button>
           </div>
         </div>
-        <table id="annualReportTable">
+        
+        <table class="data-table">
           <thead>
             <tr>
               <th>رقم المحل</th>
@@ -1035,832 +898,415 @@
               <th>حالة الدفع</th>
               <th>المدفوع</th>
               <th>المتبقي</th>
+              <th>الواصل</th>
             </tr>
           </thead>
           <tbody>
-            <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
+            <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
-        <div id="annualLoading" class="loading">
-          <div class="loading-spinner"></div>
+      </div>
+    </div>
+
+    <!-- واصل الطباعة -->
+    <div class="receipt" id="receipt">
+      <div class="receipt-header">
+        <h2>النادي الأهلي - المشروع الاستثماري</h2>
+        <p>واصل مالي</p>
+      </div>
+      
+      <div class="receipt-details">
+        <div class="receipt-item">
+          <span>رقم الواصل:</span>
+          <span id="receiptNumber">R-2024001</span>
         </div>
-        <div id="noAnnualData" class="no-data" style="display: none;">
-          لا توجد بيانات مطابقة لعوامل التصفية المحددة
+        <div class="receipt-item">
+          <span>التاريخ:</span>
+          <span id="receiptDate"></span>
         </div>
+        <div class="receipt-item">
+          <span>اسم المستأجر:</span>
+          <span id="receiptTenantName">محمد احمد أبو شعالة</span>
+        </div>
+        <div class="receipt-item">
+          <span>رقم المحل:</span>
+          <span id="receiptShopNumber">1</span>
+        </div>
+        <div class="receipt-item">
+          <span>قيمة الإيجار الشهري:</span>
+          <span id="receiptRent">1,500 د.ل</span>
+        </div>
+        <div class="receipt-item">
+          <span>المبلغ المدفوع:</span>
+          <span id="receiptAmount">10,500 د.ل</span>
+        </div>
+        <div class="receipt-item">
+          <span>طريقة الدفع:</span>
+          <span>نقدي</span>
+        </div>
+        <div class="receipt-item">
+          <span>الفترة:</span>
+          <span id="receiptPeriod">من 01/01/2025 إلى 30/07/2025</span>
+        </div>
+      </div>
+      
+      <div class="receipt-footer">
+        <p>شكراً لتعاملكم معنا</p>
+        <p>هذا الواصل ليس بإيصال مالي</p>
       </div>
     </div>
   </div>
 
   <script>
-    // بيانات المستأجرين (سيتم تحميلها من ملف JSON)
-    let tenantsData = [];
+    // بيانات التطبيق
+    let tenantsData = {
+      "complete": [],
+      "not_completed": [],
+      "legal_review": []
+    };
 
-    // تهيئة الرسوم البيانية والبيانات
+    let unreadNotifications = 3;
+    let currentTenant = null;
+    let allTenantsData = [];
+
+    // تهيئة التطبيق
     document.addEventListener('DOMContentLoaded', function() {
+      // إعداد التنقل بين علامات التبويب
+      setupTabsNavigation();
+      
+      // تحديث عدد التنبيهات غير المقروءة
+      updateNotificationBadge();
+      
+      // جلب البيانات من GitHub
       fetchDataFromGitHub();
-      setupEventListeners();
     });
 
-    // دالة لجلب البيانات من GitHub
+    // جلب البيانات من GitHub
     async function fetchDataFromGitHub() {
-      const loadingElement = document.createElement('div');
-      loadingElement.className = 'loading';
-      loadingElement.innerHTML = '<div class="loading-spinner"></div>';
-      document.body.appendChild(loadingElement);
-
       try {
-        const response = await fetch('https://raw.githubusercontent.com/alahlisc/Investment-project/main/tenants_data2025.json');
+        showLoadingIndicator();
+        
+        // استخدام CORS proxy لتجنب مشاكل CORS
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const targetUrl = 'https://raw.githubusercontent.com/alahlisc/Investment-project/main/tenants_data2025.json';
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+        
         if (!response.ok) {
-          throw new Error('فشل في تحميل البيانات من GitHub');
+          throw new Error('فشل في جلب البيانات من GitHub');
         }
-        tenantsData = await response.json();
-        loadAllData();
+        
+        const data = await response.json();
+        allTenantsData = data;
+        
+        // تصنيف البيانات
+        classifyTenants(data);
+        
+        // تحديث الواجهة بالبيانات الجديدة
+        updateDashboard(data);
+        createCharts();
+        
+        hideLoadingIndicator();
+        document.getElementById('mainContent').style.display = 'block';
       } catch (error) {
-        console.error('Error fetching data:', error);
-        alert('حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.');
-        // استخدام بيانات افتراضية في حالة فشل التحميل
-        tenantsData = [
-          { id: 1, phase: 1, name: "محمد أحمد أبو شعالة", rent: 1500, status: "paid", lastPayment: "2024-09-30", area: 35 },
-          { id: 2, phase: 1, name: "عبد الوهاب محمد", rent: 1500, status: "paid", lastPayment: "2025-02-28", area: 35 },
-          { id: 3, phase: 1, name: "بهاء الدين محمد جاد الله", rent: 1500, status: "paid", lastPayment: "2024-12-31", area: 35 },
-          { id: 4, phase: 1, name: "معز المنير محمد التريكي", rent: 1500, status: "paid", lastPayment: "2024-12-31", area: 35 },
-          { id: 5, phase: 1, name: "الهادي سعيد المختار", rent: 1500, status: "unpaid", lastPayment: "2024-06-30", area: 35 },
-          { id: 6, phase: 1, name: "حسين ابوبكر العزابي", rent: 1500, status: "unpaid", lastPayment: "2024-10-30", area: 35 },
-          { id: 7, phase: 1, name: "نورالدين سعيد المختار", rent: 1500, status: "review", lastPayment: "2024-09-30", area: 35 },
-          { id: 8, phase: 1, name: "علي سالم التليسي", rent: 2000, status: "unpaid", lastPayment: "2024-07-30", area: 40 },
-          { id: 9, phase: 2, name: "الشركة الاهلية لاستيراد المواد الغذائية", rent: 1000, status: "paid", lastPayment: "2024-12-31", area: 30 },
-          { id: 10, phase: 2, name: "فرج احمد الحراري", rent: 1000, status: "paid", lastPayment: "2024-12-31", area: 30 },
-          { id: 11, phase: 2, name: "الزبير محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-08-15", area: 32 },
-          { id: 12, phase: 2, name: "وليد محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-07-20", area: 32 },
-          { id: 13, phase: 1, name: "وجди محمد", rent: 1250, status: "review", lastPayment: "2024-09-10", area: 33 },
-          { id: 14, phase: 2, name: "محمد صالح الجهاني", rent: 1500, status: "unpaid", lastPayment: "2024-06-30", area: 35 },
-          { id: 15, phase: 2, name: "عبد الناصر محمد عياد", rent: 1000, status: "unpaid", lastPayment: "2024-05-31", area: 30 },
-          { id: 16, phase: 2, name: "عبد الناصر محمد عياد", rent: 1500, status: "unpaid", lastPayment: "2024-05-31", area: 35 },
-          { id: 17, phase: 2, name: "الزبير محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-08-15", area: 32 },
-          { id: 18, phase: 2, name: "شركة النجمة لاستيراد وسائل النقل", rent: 1100, status: "review", lastPayment: "2024-10-05", area: 32 },
-          { id: 19, phase: 2, name: "وليد محمد غيطة", rent: 1100, status: "unpaid", lastPayment: "2024-07-20", area: 32 },
-          { id: 20, phase: 2, name: "شركة السهل الأول", rent: 1100, status: "review", lastPayment: "2024-09-25", area: 32 },
-          { id: 21, phase: 1, name: "علي ميلود امقاتل", rent: 1500, status: "review", lastPayment: "2024-08-20", area: 35 },
-          { id: 22, phase: 1, name: "علي ميلود امقاتل", rent: 1500, status: "review", lastPayment: "2024-08-20", area: 35 },
-          { id: 23, phase: 1, name: "علي ميلود امقاتل", rent: 1500, status: "review", lastPayment: "2024-08-20", area: 35 },
-          { id: 24, phase: 1, name: "علي ميلود امقاتل", rent: 1500, status: "review", lastPayment: "2024-08-20", area: 35 }
-        ];
-        loadAllData();
-      } finally {
-        document.body.removeChild(loadingElement);
+        console.error('Error:', error);
+        hideLoadingIndicator();
+        alert('حدث خطأ أثناء جلب البيانات: ' + error.message + '. جاري تحميل بيانات تجريبية...');
+        
+        // تحميل بيانات تجريبية في حالة فشل جلب البيانات
+        loadSampleData();
+        document.getElementById('mainContent').style.display = 'block';
       }
     }
 
-    function loadAllData() {
-      updateStats();
-      initCharts();
-      loadShopsTable();
-      loadTenantsLists();
-      loadAnnualReport();
-      updatePredictionData();
+    // تحميل بيانات تجريبية
+    function loadSampleData() {
+      const sampleData = [
+        {
+          "Unnamed: 0": 1,
+          "المستاجر ": "محمد احمد أبو شعالة",
+          "المرحلة": 1,
+          "الدور": 0,
+          "رقم المحل": 1,
+          "الايجار": 1500,
+          "مقدم العقد": 60000,
+          "Unnamed: 7": 20000,
+          "تاريخ اخر سداد": "2024-12-02",
+          "الباقي": 0,
+          "تاريخ بداية العقد": "2021-06-01 00:00:00",
+          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
+          "ملاحظات": "مستوفي مع تعديل العقد ",
+          "القيمة المدفوعة ": 4500,
+          "رقم الايصال": 1143,
+          "اتباث الهوية": 393715,
+          "رقم االهاتف": ""
+        },
+        {
+          "Unnamed: 0": 2,
+          "المستاجر ": "عبد الوهاب محمد",
+          "المرحلة": 1,
+          "الدور": 0,
+          "رقم المحل": 2,
+          "الايجار": 1500,
+          "مقدم العقد": 60000,
+          "Unnamed: 7": 20000,
+          "تاريخ اخر سداد": "2025-02-28",
+          "الباقي": 0,
+          "تاريخ بداية العقد": "2021-06-01 00:00:00",
+          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
+          "ملاحظات": "مستوفي دافع حتي سنة  2025",
+          "القيمة المدفوعة ": 9000,
+          "رقم الايصال": 1108,
+          "اتباث الهوية": 420396,
+          "رقم االهاتف": 913186304
+        },
+        {
+          "Unnamed: 0": 3,
+          "المستاجر ": "بهاء الدين محمد جاد الله",
+          "المرحلة": 1,
+          "الدور": 0,
+          "رقم المحل": 3,
+          "الايجار": 1500,
+          "مقدم العقد": 60000,
+          "Unnamed: 7": 20000,
+          "تاريخ اخر سداد": "2024-12-31",
+          "الباقي": 0,
+          "تاريخ بداية العقد": "2021-06-01 00:00:00",
+          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
+          "ملاحظات": "مستوفي مع تعديل العقد ",
+          "القيمة المدفوعة ": 4500,
+          "رقم الايصال": 1144,
+          "اتباث الهوية": "cfyznlk2",
+          "رقم االهاتف": ""
+        }
+      ];
+      
+      allTenantsData = sampleData;
+      classifyTenants(sampleData);
+      updateDashboard(sampleData);
+      createCharts();
     }
 
-    function updateStats() {
-      const totalShops = tenantsData.length;
-      const completedShops = tenantsData.filter(shop => shop.status === 'paid').length;
-      const incompleteShops = tenantsData.filter(shop => shop.status === 'unpaid').length;
-      const reviewShops = tenantsData.filter(shop => shop.status === 'review').length;
-      const totalArea = tenantsData.reduce((sum, shop) => sum + (shop.area || 0), 0);
-      const totalRevenue = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      const avgRent = totalRevenue / totalShops || 0;
-      
-      document.getElementById('totalShops').textContent = totalShops;
-      document.getElementById('completedShops').textContent = completedShops;
-      document.getElementById('incompleteShops').textContent = incompleteShops;
-      document.getElementById('reviewShops').textContent = reviewShops;
-      document.getElementById('totalArea').textContent = `${totalArea} متر مربع`;
-      document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString();
-      document.getElementById('paidShops').textContent = completedShops;
-      document.getElementById('unpaidShops').textContent = incompleteShops;
-      document.getElementById('avgRent').textContent = avgRent.toFixed(0);
-      
-      document.getElementById('completedPercentage').textContent = `${((completedShops / totalShops) * 100).toFixed(0)}%`;
-      document.getElementById('incompletePercentage').textContent = `${((incompleteShops / totalShops) * 100).toFixed(0)}%`;
-      document.getElementById('reviewPercentage').textContent = `${((reviewShops / totalShops) * 100).toFixed(0)}%`;
-      document.getElementById('paidPercentage').textContent = `${((completedShops / totalShops) * 100).toFixed(0)}% من المحلات`;
-      document.getElementById('unpaidPercentage').textContent = `${((incompleteShops / totalShops) * 100).toFixed(0)}% من المحلات`;
+    // عرض مؤشر التحميل
+    function showLoadingIndicator() {
+      document.getElementById('loadingIndicator').style.display = 'flex';
     }
 
-    function updatePredictionData() {
-      const totalRevenue = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      const predictedRevenue = totalRevenue * 2;
-      const predictedAnnualIncrease = predictedRevenue * 12;
-      
-      document.getElementById('currentMonthlyRevenue').textContent = totalRevenue.toLocaleString();
-      document.getElementById('predictedMonthlyRevenue').textContent = predictedRevenue.toLocaleString();
-      document.getElementById('predictedAnnualIncrease').textContent = predictedAnnualIncrease.toLocaleString();
-      
-      // تحديث جدول التنبؤ
-      const phase1Shops = tenantsData.filter(shop => shop.phase === 1);
-      const phase2Shops = tenantsData.filter(shop => shop.phase === 2);
-      
-      const phase1Revenue = phase1Shops.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      const phase2Revenue = phase2Shops.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      
-      const predictionTableBody = document.getElementById('predictionTableBody');
-      predictionTableBody.innerHTML = `
-        <tr>
-          <td>المرحلة 1</td>
-          <td>${phase1Shops.length}</td>
-          <td>${phase1Revenue.toLocaleString()} د.ل</td>
-          <td>${(phase1Revenue * 2).toLocaleString()} د.ل</td>
-          <td class="positive">+${phase1Revenue.toLocaleString()} د.ل</td>
-        </tr>
-        <tr>
-          <td>المرحلة 2</td>
-          <td>${phase2Shops.length}</td>
-          <td>${phase2Revenue.toLocaleString()} د.ل</td>
-          <td>${(phase2Revenue * 2).toLocaleString()} د.ل</td>
-          <td class="positive">+${phase2Revenue.toLocaleString()} د.ل</td>
-        </tr>
-        <tr>
-          <td>المجموع</td>
-          <td>${tenantsData.length}</td>
-          <td>${totalRevenue.toLocaleString()} د.ل</td>
-          <td>${predictedRevenue.toLocaleString()} د.ل</td>
-          <td class="positive">+${totalRevenue.toLocaleString()} د.ل</td>
-        </tr>
-      `;
+    // إخفاء مؤشر التحميل
+    function hideLoadingIndicator() {
+      document.getElementById('loadingIndicator').style.display = 'none';
     }
 
-    function initCharts() {
-      // رسم بياني لمقارنة المراحل
-      const phaseCtx = document.getElementById('phaseComparisonChart').getContext('2d');
-      const phase1Revenue = tenantsData
-        .filter(shop => shop.phase === 1)
-        .reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      
-      const phase2Revenue = tenantsData
-        .filter(shop => shop.phase === 2)
-        .reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      
-      new Chart(phaseCtx, {
-        type: 'bar',
-        data: {
-          labels: ['المرحلة 1', 'المرحلة 2'],
-          datasets: [{
-            label: 'الإيراد الشهري',
-            data: [phase1Revenue, phase2Revenue],
-            backgroundColor: ['rgba(0, 100, 0, 0.7)', 'rgba(10, 61, 98, 0.7)'],
-            borderColor: ['rgb(0, 100, 0)', 'rgb(10, 61, 98)'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'مقارنة الإيرادات بين المراحل',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            },
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString() + ' د.ل';
-                }
-              }
-            }
-          }
-        }
-      });
-
-      // رسم بياني لحالة الدفع
-      const paymentCtx = document.getElementById('paymentStatusChart').getContext('2d');
-      const paidCount = tenantsData.filter(shop => shop.status === 'paid').length;
-      const unpaidCount = tenantsData.filter(shop => shop.status === 'unpaid').length;
-      const reviewCount = tenantsData.filter(shop => shop.status === 'review').length;
-      
-      new Chart(paymentCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['مسدد', 'غير مسدد', 'قيد المراجعة'],
-          datasets: [{
-            data: [paidCount, unpaidCount, reviewCount],
-            backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              rtl: true,
-              labels: {
-                font: {
-                  family: 'Cairo'
-                }
-              }
-            },
-            title: {
-              display: true,
-              text: 'توزيع المحلات حسب حالة الدفع',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            }
-          }
-        }
-      });
-
-      // رسم بياني للإيرادات الشهرية
-      const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-      const monthlyRevenue = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      
-      new Chart(monthlyCtx, {
-        type: 'line',
-        data: {
-          labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-          datasets: [{
-            label: 'الإيراد الشهري',
-            data: Array(12).fill(0).map((_, i) => i < 9 ? monthlyRevenue * 0.9 + (monthlyRevenue * 0.1 * i) : monthlyRevenue),
-            fill: true,
-            backgroundColor: 'rgba(0, 100, 0, 0.1)',
-            borderColor: 'rgb(0, 100, 0)',
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'الإيرادات الشهرية للمشروع خلال السنة',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            },
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString() + ' د.ل';
-                }
-              }
-            }
-          }
-        }
-      });
-
-      // رسم بياني للتنبؤ
-      const predictionCtx = document.getElementById('predictionChart').getContext('2d');
-      const totalRevenue = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0);
-      const predictedRevenue = totalRevenue * 2;
-      
-      new Chart(predictionCtx, {
-        type: 'bar',
-        data: {
-          labels: ['الإيراد الحالي', 'الإيراد بعد الزيادة'],
-          datasets: [{
-            label: 'دينار ليبي',
-            data: [totalRevenue, predictedRevenue],
-            backgroundColor: ['rgba(0, 100, 0, 0.7)', 'rgba(10, 61, 98, 0.7)'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'مقارنة الإيرادات قبل وبعد زيادة 100%',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            },
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString() + ' د.ل';
-                }
-              }
-            }
-          }
-        }
-      });
-
-      // رسم بياني لتوزيع الإيجارات
-      const rentCtx = document.getElementById('rentDistributionChart').getContext('2d');
-      const rentRanges = {
-        'أقل من 1000': tenantsData.filter(shop => (shop.rent || 0) < 1000).length,
-        '1000 - 1500': tenantsData.filter(shop => (shop.rent || 0) >= 1000 && (shop.rent || 0) <= 1500).length,
-        'أكثر من 1500': tenantsData.filter(shop => (shop.rent || 0) > 1500).length
+    // تصنيف المستأجرين بناءً على حالتهم
+    function classifyTenants(data) {
+      tenantsData = {
+        "complete": [],
+        "not_completed": [],
+        "legal_review": []
       };
-      
-      new Chart(rentCtx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(rentRanges),
-          datasets: [{
-            label: 'عدد المحلات',
-            data: Object.values(rentRanges),
-            backgroundColor: ['rgba(0, 100, 0, 0.7)', 'rgba(10, 61, 98, 0.7)', 'rgba(245, 158, 11, 0.7)'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'توزيع المحلات حسب قيمة الإيجار',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            },
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
-              }
-            }
-          }
-        }
-      });
 
-      // رسم بياني للتنبؤ السنوي
-      const annualPredictionCtx = document.getElementById('annualPredictionChart').getContext('2d');
-      const currentAnnual = totalRevenue * 12;
-      const predictedAnnual = predictedRevenue * 12;
-      
-      new Chart(annualPredictionCtx, {
-        type: 'bar',
-        data: {
-          labels: ['الإيراد السنوي الحالي', 'الإيراد السنوي المتوقع'],
-          datasets: [{
-            label: 'دينار ليبي',
-            data: [currentAnnual, predictedAnnual],
-            backgroundColor: ['rgba(0, 100, 0, 0.7)', 'rgba(10, 61, 98, 0.7)'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'مقارنة الإيرادات السنوية قبل وبعد الزيادة',
-              color: '#006400',
-              font: {
-                size: 16,
-                family: 'Cairo'
-              }
-            },
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString() + ' د.ل';
-                }
-              }
-            }
-          }
+      data.forEach(tenant => {
+        // تحويل القيم الفارغة إلى 0
+        const paidAmount = parseFloat(tenant['القيمة المدفوعة '] || 0);
+        const contractAdvance = parseFloat(tenant['مقدم العقد'] || 0);
+        
+        // حساب المبلغ المتبقي
+        const remaining = contractAdvance - paidAmount;
+        
+        // تصنيف المستأجرين بناءً على حالة الدفع
+        if (remaining <= 0) {
+          tenantsData.complete.push(tenant);
+        } else if (remaining > 0 && remaining < contractAdvance) {
+          tenantsData.not_completed.push(tenant);
+        } else {
+          tenantsData.legal_review.push(tenant);
         }
       });
     }
 
-    function loadShopsTable() {
-      const tableBody = document.querySelector('#shopsTable tbody');
-      const loadingElement = document.getElementById('shopsLoading');
-      const noDataElement = document.getElementById('noShopsData');
+    // تحديث لوحة التحكم بالبيانات الجديدة
+    function updateDashboard(data) {
+      // حساب الإحصائيات
+      const totalShops = data.length;
+      const completedShops = tenantsData.complete.length;
+      const notCompletedShops = tenantsData.not_completed.length;
+      const underReviewShops = tenantsData.legal_review.length;
       
-      loadingElement.style.display = 'flex';
+      // حساب الإيرادات
+      let totalRevenue = 0;
+      let totalPaid = 0;
+      
+      data.forEach(tenant => {
+        const rent = parseFloat(tenant['الايجار'] || 0);
+        const paid = parseFloat(tenant['القيمة المدفوعة '] || 0);
+        
+        totalRevenue += rent;
+        totalPaid += paid;
+      });
+      
+      const avgRent = totalRevenue / totalShops;
+      const netProfit = totalPaid * 0.8; // افتراض صافي ربح 80%
+      
+      // تحديث بطاقات الإحصائيات
+      const cardValues = document.querySelectorAll('.card-value');
+      if (cardValues.length >= 6) {
+        cardValues[0].textContent = totalShops;
+        cardValues[1].textContent = completedShops;
+        cardValues[2].textContent = notCompletedShops;
+        cardValues[3].textContent = totalRevenue.toLocaleString();
+        cardValues[4].textContent = avgRent.toFixed(0);
+        cardValues[5].textContent = netProfit.toLocaleString();
+      }
+      
+      // تحديث جداول البيانات
+      updateShopsTable(data);
+      updateTenantsTable();
+      updateAnnualReportTable(data);
+    }
+
+    // تحديث جدول المحلات
+    function updateShopsTable(data) {
+      const tableBody = document.querySelector('#shops table tbody');
+      if (!tableBody) return;
+      
       tableBody.innerHTML = '';
-      noDataElement.style.display = 'none';
       
-      setTimeout(() => {
-        // تطبيق الفلترة والترتيب
-        let filteredData = [...tenantsData];
+      data.forEach(tenant => {
+        const row = document.createElement('tr');
         
-        // التصفية حسب المرحلة
-        const phaseFilter = document.getElementById('phaseFilter').value;
-        if (phaseFilter !== 'all') {
-          filteredData = filteredData.filter(shop => shop.phase == phaseFilter);
+        // تحديد حالة الدفع
+        let statusClass = 'status-pending';
+        let statusText = 'غير مكتمل';
+        
+        const paidAmount = parseFloat(tenant['القيمة المدفوعة '] || 0);
+        const contractAdvance = parseFloat(tenant['مقدم العقد'] || 0);
+        
+        if (paidAmount >= contractAdvance) {
+          statusClass = 'status-paid';
+          statusText = 'مكتمل';
+        } else if (paidAmount === 0) {
+          statusClass = 'status-overdue';
+          statusText = 'متأخر';
         }
         
-        // التصفية حسب حالة الدفع
-        const paymentFilter = document.getElementById('paymentFilter').value;
-        if (paymentFilter !== 'all') {
-          filteredData = filteredData.filter(shop => shop.status === paymentFilter);
-        }
+        row.innerHTML = `
+          <td>${tenant['رقم المحل'] || ''}</td>
+          <td>المرحلة ${tenant['المرحلة'] || ''}</td>
+          <td>${getFloorName(tenant['الدور'])}</td>
+          <td>${tenant['المستاجر '] || ''}</td>
+          <td>${parseFloat(tenant['الايجار'] || 0).toLocaleString()} د.ل</td>
+          <td><span class="invoice-status ${statusClass}">${statusText}</span></td>
+          <td>${tenant['تاريخ اخر سداد'] || 'غير متوفر'}</td>
+          <td><button class="btn-view" onclick="showPaymentDetails(${tenant['رقم المحل']})">عرض الواصل</button></td>
+        `;
         
-        // التصفية حسب نطاق الإيجار
-        const rentFilter = document.getElementById('rentFilter').value;
-        if (rentFilter !== 'all') {
-          if (rentFilter === '0-1000') {
-            filteredData = filteredData.filter(shop => (shop.rent || 0) < 1000);
-          } else if (rentFilter === '1000-1500') {
-            filteredData = filteredData.filter(shop => (shop.rent || 0) >= 1000 && (shop.rent || 0) <= 1500);
-          } else if (rentFilter === '1500+') {
-            filteredData = filteredData.filter(shop => (shop.rent || 0) > 1500);
-          }
-        }
-        
-        // البحث بالنص
-        const searchText = document.getElementById('shopFilter').value.toLowerCase();
-        if (searchText) {
-          filteredData = filteredData.filter(shop => 
-            shop.id.toString().includes(searchText) || 
-            shop.name.toLowerCase().includes(searchText)
-          );
-        }
-        
-        // الترتيب
-        const sortBy = document.getElementById('sortBy').value;
-        const sortOrder = document.getElementById('sortOrder').value;
-        
-        filteredData.sort((a, b) => {
-          let valueA, valueB;
-          
-          if (sortBy === 'id') {
-            valueA = a.id;
-            valueB = b.id;
-          } else if (sortBy === 'rent') {
-            valueA = a.rent || 0;
-            valueB = b.rent || 0;
-          } else if (sortBy === 'name') {
-            valueA = a.name;
-            valueB = b.name;
-          }
-          
-          if (sortOrder === 'asc') {
-            return valueA > valueB ? 1 : -1;
-          } else {
-            return valueA < valueB ? 1 : -1;
-          }
-        });
-        
-        // عرض البيانات
-        if (filteredData.length === 0) {
-          noDataElement.style.display = 'block';
-        } else {
-          filteredData.forEach(shop => {
-            const row = document.createElement('tr');
-            let statusBadge = '';
-            
-            if (shop.status === 'paid') {
-              statusBadge = '<span class="tenant-status status-completed">مسدد</span>';
-            } else if (shop.status === 'unpaid') {
-              statusBadge = '<span class="tenant-status status-incomplete">غير مسدد</span>';
-            } else {
-              statusBadge = '<span class="tenant-status status-review">قيد المراجعة</span>';
-            }
-            
-            row.innerHTML = `
-              <td>${shop.id}</td>
-              <td>المرحلة ${shop.phase}</td>
-              <td>${shop.name}</td>
-              <td>${(shop.rent || 0).toLocaleString()} د.ل</td>
-              <td>${statusBadge}</td>
-              <td>${shop.lastPayment || 'غير متوفر'}</td>
-              <td><button class="view-details" data-id="${shop.id}">عرض التفاصيل</button></td>
-            `;
-            
-            tableBody.appendChild(row);
-          });
-        }
-        
-        loadingElement.style.display = 'none';
-        
-        // إضافة مستمعين للأزرار
-        document.querySelectorAll('.view-details').forEach(button => {
-          button.addEventListener('click', function() {
-            const shopId = this.getAttribute('data-id');
-            showShopDetails(shopId);
-          });
-        });
-      }, 500);
+        tableBody.appendChild(row);
+      });
     }
 
-    function loadTenantsLists() {
-      const completedList = document.getElementById('completedTenants');
-      const incompleteList = document.getElementById('incompleteTenants');
-      const reviewList = document.getElementById('reviewTenants');
-      
-      // التصفية حسب البحث
-      const searchText = document.getElementById('tenantSearch').value.toLowerCase();
-      const categoryFilter = document.getElementById('tenantCategoryFilter').value;
-      
-      const completedTenants = tenantsData.filter(tenant => 
-        tenant.status === 'paid' && 
-        (categoryFilter === 'all' || categoryFilter === 'completed') &&
-        (tenant.name.toLowerCase().includes(searchText) || tenant.id.toString().includes(searchText))
-      );
-      
-      const incompleteTenants = tenantsData.filter(tenant => 
-        tenant.status === 'unpaid' && 
-        (categoryFilter === 'all' || categoryFilter === 'incomplete') &&
-        (tenant.name.toLowerCase().includes(searchText) || tenant.id.toString().includes(searchText))
-      );
-      
-      const reviewTenants = tenantsData.filter(tenant => 
-        tenant.status === 'review' && 
-        (categoryFilter === 'all' || categoryFilter === 'review') &&
-        (tenant.name.toLowerCase().includes(searchText) || tenant.id.toString().includes(searchText))
-      );
-      
-      // تحديث العداد
-      document.querySelector('.category-card:nth-child(1) .category-count').textContent = completedTenants.length;
-      document.querySelector('.category-card:nth-child(2) .category-count').textContent = incompleteTenants.length;
-      document.querySelector('.category-card:nth-child(3) .category-count').textContent = reviewTenants.length;
-      
-      // عرض المستأجرين المكتملين
-      completedList.innerHTML = '';
-      if (completedTenants.length === 0) {
-        completedList.innerHTML = '<div class="no-data">لا توجد بيانات</div>';
-      } else {
-        completedTenants.forEach(tenant => {
-          const tenantItem = document.createElement('div');
-          tenantItem.className = 'tenant-item';
-          tenantItem.innerHTML = `
-            <div class="tenant-info">
-              <div class="tenant-name">${tenant.name}</div>
-              <div class="tenant-details">محل ${tenant.id} - المرحلة ${tenant.phase} - ${(tenant.rent || 0).toLocaleString()} د.ل/شهر</div>
-            </div>
-            <span class="tenant-status status-completed">مكتمل</span>
-          `;
-          completedList.appendChild(tenantItem);
-        });
-      }
-      
-      // عرض المستأجرين غير المكتملين
-      incompleteList.innerHTML = '';
-      if (incompleteTenants.length === 0) {
-        incompleteList.innerHTML = '<div class="no-data">لا توجد بيانات</div>';
-      } else {
-        incompleteTenants.forEach(tenant => {
-          const tenantItem = document.createElement('div');
-          tenantItem.className = 'tenant-item';
-          tenantItem.innerHTML = `
-            <div class="tenant-info">
-              <div class="tenant-name">${tenant.name}</div>
-              <div class="tenant-details">محل ${tenant.id} - المرحلة ${tenant.phase} - ${(tenant.rent || 0).toLocaleString()} د.ل/شهر</div>
-            </div>
-            <span class="tenant-status status-incomplete">غير مكتمل</span>
-          `;
-          incompleteList.appendChild(tenantItem);
-        });
-      }
-      
-      // عرض المستأجرين تحت المراجعة
-      reviewList.innerHTML = '';
-      if (reviewTenants.length === 0) {
-        reviewList.innerHTML = '<div class="no-data">لا توجد بيانات</div>';
-      } else {
-        reviewTenants.forEach(tenant => {
-          const tenantItem = document.createElement('div');
-          tenantItem.className = 'tenant-item';
-          tenantItem.innerHTML = `
-            <div class="tenant-info">
-              <div class="tenant-name">${tenant.name}</div>
-              <div class="tenant-details">محل ${tenant.id} - المرحلة ${tenant.phase} - ${(tenant.rent || 0).toLocaleString()} د.ل/شهر</div>
-            </div>
-            <span class="tenant-status status-review">تحت المراجعة</span>
-          `;
-          reviewList.appendChild(tenantItem);
-        });
+    // تحويل رقم الدور إلى اسم
+    function getFloorName(floorNumber) {
+      switch(parseInt(floorNumber)) {
+        case 0: return 'الأرضي';
+        case 1: return 'الأول';
+        case 2: return 'الثاني';
+        default: return floorNumber;
       }
     }
 
-    function loadAnnualReport() {
-      const tableBody = document.querySelector('#annualReportTable tbody');
-      const loadingElement = document.getElementById('annualLoading');
-      const noDataElement = document.getElementById('noAnnualData');
+    // تحديث جدول المستأجرين
+    function updateTenantsTable() {
+      const tableBody = document.querySelector('#tenants table tbody');
+      if (!tableBody) return;
       
-      loadingElement.style.display = 'flex';
       tableBody.innerHTML = '';
-      noDataElement.style.display = 'none';
       
-      // تحديث الإحصائيات السنوية
-      const annualRevenue = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0) * 12;
-      const avgRent = tenantsData.reduce((sum, shop) => sum + (shop.rent || 0), 0) / tenantsData.length || 0;
-      
-      document.getElementById('annualRevenue').textContent = annualRevenue.toLocaleString();
-      document.getElementById('annualTotalShops').textContent = tenantsData.length;
-      document.getElementById('annualAvgRent').textContent = avgRent.toFixed(0);
-      document.getElementById('occupancyRate').textContent = '100%';
-      document.getElementById('occupancyCount').textContent = `${tenantsData.length} من ${tenantsData.length} محل`;
-      
-      setTimeout(() => {
-        // تطبيق الفلترة والترتيب
-        let filteredData = [...tenantsData];
+      tenantsData.complete.forEach(tenant => {
+        const row = document.createElement('tr');
         
-        // التصفية حسب السنة (في التطبيق الحقيقي، سيتم استخدام البيانات الفعلية للسنوات)
-        const yearFilter = document.getElementById('yearFilter').value;
-        // هذه مجرد محاكاة - في التطبيق الحقيقي، ستكون هناك بيانات سنوية فعلية
+        row.innerHTML = `
+          <td>${tenant['المستاجر '] || ''}</td>
+          <td>${tenant['رقم المحل'] || ''}</td>
+          <td>المرحلة ${tenant['المرحلة'] || ''}</td>
+          <td>${parseFloat(tenant['الايجار'] || 0).toLocaleString()} د.ل</td>
+          <td>${parseFloat(tenant['مقدم العقد'] || 0).toLocaleString()} د.ل</td>
+          <td>${formatDate(tenant['تاريخ بداية العقد'])}</td>
+          <td>${formatDate(tenant['تاريخ نهاية العقد'])}</td>
+          <td><span class="invoice-status status-paid">مكتمل</span></td>
+          <td><button class="btn-view" onclick="showPaymentDetails(${tenant['رقم المحل']})">عرض</button></td>
+        `;
         
-        // التصفية حسب المرحلة
-        const phaseFilter = document.getElementById('annualPhaseFilter').value;
-        if (phaseFilter !== 'all') {
-          filteredData = filteredData.filter(shop => shop.phase == phaseFilter);
-        }
-        
-        // التصفية حسب حالة الدفع
-        const statusFilter = document.getElementById('annualStatusFilter').value;
-        if (statusFilter !== 'all') {
-          filteredData = filteredData.filter(shop => shop.status === statusFilter);
-        }
-        
-        // البحث بالنص
-        const searchText = document.getElementById('annualSearch').value.toLowerCase();
-        if (searchText) {
-          filteredData = filteredData.filter(shop => 
-            shop.id.toString().includes(searchText) || 
-            shop.name.toLowerCase().includes(searchText)
-          );
-        }
-        
-        // الترتيب
-        const sortBy = document.getElementById('annualSortBy').value;
-        const sortOrder = document.getElementById('annualSortOrder').value;
-        
-        filteredData.sort((a, b) => {
-          let valueA, valueB;
-          
-          if (sortBy === 'id') {
-            valueA = a.id;
-            valueB = b.id;
-          } else if (sortBy === 'rent') {
-            valueA = a.rent || 0;
-            valueB = b.rent || 0;
-          } else if (sortBy === 'annualRent') {
-            valueA = (a.rent || 0) * 12;
-            valueB = (b.rent || 0) * 12;
-          } else if (sortBy === 'paid') {
-            // محاكاة للمبلغ المدفوع - في التطبيق الحقيقي، ستكون هناك بيانات فعلية
-            valueA = a.status === 'paid' ? (a.rent || 0) * 12 : (a.rent || 0) * 6;
-            valueB = b.status === 'paid' ? (b.rent || 0) * 12 : (b.rent || 0) * 6;
-          } else if (sortBy === 'remaining') {
-            // محاكاة للمبلغ المتبقي - في التطبيق الحقيقي، ستكون هناك بيانات فعلية
-            valueA = a.status === 'paid' ? 0 : (a.rent || 0) * 6;
-            valueB = b.status === 'paid' ? 0 : (b.rent || 0) * 6;
-          }
-          
-          if (sortOrder === 'asc') {
-            return valueA > valueB ? 1 : -1;
-          } else {
-            return valueA < valueB ? 1 : -1;
-          }
-        });
-        
-        // عرض البيانات
-        if (filteredData.length === 0) {
-          noDataElement.style.display = 'block';
-        } else {
-          filteredData.forEach(shop => {
-            const row = document.createElement('tr');
-            
-            // محاكاة للبيانات السنوية - في التطبيق الحقيقي، ستكون هناك بيانات فعلية
-            const annualRent = (shop.rent || 0) * 12;
-            let paidAmount = 0;
-            let remainingAmount = 0;
-            let statusBadge = '';
-            
-            if (shop.status === 'paid') {
-              paidAmount = annualRent;
-              remainingAmount = 0;
-              statusBadge = '<span class="tenant-status status-completed">مكتمل</span>';
-            } else if (shop.status === 'unpaid') {
-              paidAmount = annualRent / 2;
-              remainingAmount = annualRent / 2;
-              statusBadge = '<span class="tenant-status status-incomplete">غير مكتمل</span>';
-            } else {
-              paidAmount = annualRent / 2;
-              remainingAmount = annualRent / 2;
-              statusBadge = '<span class="tenant-status status-review">تحت المراجعة</span>';
-            }
-            
-            row.innerHTML = `
-              <td>${shop.id}</td>
-              <td>المرحلة ${shop.phase}</td>
-              <td>${shop.name}</td>
-              <td>${(shop.rent || 0).toLocaleString()} د.ل</td>
-              <td>${annualRent.toLocaleString()} د.ل</td>
-              <td>${statusBadge}</td>
-              <td>${paidAmount.toLocaleString()} د.ل</td>
-              <td>${remainingAmount.toLocaleString()} د.ل</td>
-            `;
-            
-            tableBody.appendChild(row);
-          });
-        }
-        
-        loadingElement.style.display = 'none';
-      }, 500);
+        tableBody.appendChild(row);
+      });
     }
 
-    function showShopDetails(shopId) {
-      const shop = tenantsData.find(s => s.id == shopId);
-      if (!shop) return;
+    // تحديث جدول التقرير السنوي
+    function updateAnnualReportTable(data) {
+      const tableBody = document.querySelector('#annual table tbody');
+      if (!tableBody) return;
       
-      document.getElementById('detailShopNumber').textContent = shop.id;
-      document.getElementById('detailTenant').textContent = shop.name;
-      document.getElementById('detailPhase').textContent = `المرحلة ${shop.phase}`;
-      document.getElementById('detailRent').textContent = (shop.rent || 0).toLocaleString();
+      tableBody.innerHTML = '';
       
-      let statusText = '';
-      if (shop.status === 'paid') {
-        statusText = '<span class="tenant-status status-completed">مسدد</span>';
-      } else if (shop.status === 'unpaid') {
-        statusText = '<span class="tenant-status status-incomplete">غير مسدد</span>';
-      } else {
-        statusText = '<span class="tenant-status status-review">قيد المراجعة</span>';
-      }
-      
-      document.getElementById('detailPaymentStatus').innerHTML = statusText;
-      document.getElementById('detailLastPayment').textContent = shop.lastPayment || 'غير متوفر';
-      
-      // إنشاء سجل الدفعات الشهرية
-      const paymentMonths = document.getElementById('paymentMonths');
-      paymentMonths.innerHTML = '';
-      
-      const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
-                     'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-      
-      const currentMonth = new Date().getMonth();
-      
-      for (let i = 0; i <= currentMonth; i++) {
-        const monthDiv = document.createElement('div');
-        monthDiv.className = 'payment-month';
+      data.forEach(tenant => {
+        const monthlyRent = parseFloat(tenant['الايجار'] || 0);
+        const yearlyRent = monthlyRent * 12;
+        const paidAmount = parseFloat(tenant['القيمة المدفوعة '] || 0);
+        const remaining = yearlyRent - paidAmount;
         
-        // محاكاة حالة الدفع لكل شهر بناءً على حالة المحل
-        let isPaid = false;
-        if (shop.status === 'paid') {
-          isPaid = true;
-        } else if (shop.status === 'unpaid') {
-          isPaid = Math.random() > 0.7; // 30% chance of being paid for unpaid shops
-        } else {
-          isPaid = Math.random() > 0.5; // 50% chance of being paid for review shops
+        // تحديد حالة الدفع
+        let statusClass = 'status-pending';
+        let statusText = 'غير مكتمل';
+        
+        if (paidAmount >= yearlyRent) {
+          statusClass = 'status-paid';
+          statusText = 'مكتمل';
+        } else if (paidAmount === 0) {
+          statusClass = 'status-overdue';
+          statusText = 'متأخر';
         }
         
-        if (isPaid) {
-          monthDiv.classList.add('paid');
-          monthDiv.textContent = `${months[i]} ✓`;
-        } else {
-          monthDiv.classList.add('unpaid');
-          monthDiv.textContent = `${months[i]} ✗`;
-        }
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${tenant['رقم المحل'] || ''}</td>
+          <td>المرحلة ${tenant['المرحلة'] || ''}</td>
+          <td>${tenant['المستاجر '] || ''}</td>
+          <td>${monthlyRent.toLocaleString()} د.ل</td>
+          <td>${yearlyRent.toLocaleString()} د.ل</td>
+          <td><span class="invoice-status ${statusClass}">${statusText}</span></td>
+          <td>${paidAmount.toLocaleString()} د.ل</td>
+          <td>${remaining.toLocaleString()} د.ل</td>
+          <td><button class="btn-view" onclick="showPaymentDetails(${tenant['رقم المحل']})">عرض</button></td>
+        `;
         
-        paymentMonths.appendChild(monthDiv);
-      }
-      
-      document.getElementById('shopDetails').style.display = 'block';
-      
-      // التمرير إلى قسم التفاصيل
-      document.getElementById('shopDetails').scrollIntoView({ behavior: 'smooth' });
+        tableBody.appendChild(row);
+      });
     }
 
-    function setupEventListeners() {
-      // التنقل بين علامات التبويب
-      document.querySelectorAll('.nav-tab').forEach(tab => {
+    // تنسيق التاريخ
+    function formatDate(dateString) {
+      if (!dateString) return 'غير محدد';
+      
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ar-EG');
+      } catch (e) {
+        return dateString;
+      }
+    }
+
+    // البحث عن مستأجر برقم المحل
+    function findTenantByShopNumber(shopNumber) {
+      return allTenantsData.find(tenant => parseInt(tenant['رقم المحل']) === parseInt(shopNumber));
+    }
+
+    // إعداد التنقل بين علامات التبويب
+    function setupTabsNavigation() {
+      const tabs = document.querySelectorAll('.nav-tab');
+      
+      tabs.forEach(tab => {
         tab.addEventListener('click', function() {
           // إزالة النشاط من جميع علامات التبويب
-          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          tabs.forEach(t => t.classList.remove('active'));
           document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
           
           // إضافة النشاط إلى علامة التبويب المحددة
@@ -1869,55 +1315,269 @@
           document.getElementById(tabId).classList.add('active');
         });
       });
-      
-      // مرشحات جدول المحلات
-      document.getElementById('phaseFilter').addEventListener('change', () => loadShopsTable());
-      document.getElementById('paymentFilter').addEventListener('change', () => loadShopsTable());
-      document.getElementById('rentFilter').addEventListener('change', () => loadShopsTable());
-      document.getElementById('shopFilter').addEventListener('input', () => loadShopsTable());
-      document.getElementById('sortBy').addEventListener('change', () => loadShopsTable());
-      document.getElementById('sortOrder').addEventListener('change', () => loadShopsTable());
-      
-      // مرشحات تصنيف المستأجرين
-      document.getElementById('tenantCategoryFilter').addEventListener('change', () => loadTenantsLists());
-      document.getElementById('tenantSearch').addEventListener('input', () => loadTenantsLists());
-      
-      // مرشحات الجرد السنوي
-      document.getElementById('yearFilter').addEventListener('change', () => loadAnnualReport());
-      document.getElementById('annualPhaseFilter').addEventListener('change', () => loadAnnualReport());
-      document.getElementById('annualStatusFilter').addEventListener('change', () => loadAnnualReport());
-      document.getElementById('annualSearch').addEventListener('input', () => loadAnnualReport());
-      document.getElementById('annualSortBy').addEventListener('change', () => loadAnnualReport());
-      document.getElementById('annualSortOrder').addEventListener('change', () => loadAnnualReport());
-      
-      // زر تحديث البيانات
-      document.getElementById('refreshData').addEventListener('click', () => {
-        fetchDataFromGitHub();
-      });
     }
 
+    // تحديث عدد التنبيهات
+    function updateNotificationBadge() {
+      const badge = document.querySelector('.notification-badge');
+      if (badge) {
+        badge.textContent = unreadNotifications;
+      }
+    }
+
+    // عرض التنبيهات
+    function showNotifications() {
+      alert(`لديك ${unreadNotifications} تنبيهات غير مقروءة`);
+    }
+
+    // إنشاء الرسوم البيانية
+    function createCharts() {
+      // رسم بياني لتوزيع المحلات
+      const paymentCtx = document.getElementById('paymentChart');
+      if (paymentCtx) {
+        new Chart(paymentCtx.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['مكتمل', 'غير مكتمل', 'تحت المراجعة'],
+            datasets: [{
+              data: [tenantsData.complete.length, tenantsData.not_completed.length, tenantsData.legal_review.length],
+              backgroundColor: ['#27ae60', '#f39c12', '#e74c3c'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                rtl: true,
+                labels: {
+                  font: {
+                    family: 'Cairo'
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // رسم بياني للتحليلات التنبؤية
+      const predictionCtx = document.getElementById('predictionChart');
+      if (predictionCtx) {
+        new Chart(predictionCtx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['المرحلة 1', 'المرحلة 2', 'المجموع'],
+            datasets: [
+              {
+                label: 'الإيراد الحالي',
+                data: [60000, 37500, 97500],
+                backgroundColor: 'rgba(0, 100, 0, 0.7)',
+              },
+              {
+                label: 'الإيراد بعد الزيادة',
+                data: [120000, 75000, 195000],
+                backgroundColor: 'rgba(10, 61, 98, 0.7)',
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                rtl: true,
+                labels: {
+                  font: {
+                    family: 'Cairo'
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return value.toLocaleString() + ' د.ل';
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // عرض تفاصيل الدفع للمستأجر
+    function showPaymentDetails(shopNumber) {
+      // البحث عن المستأجر برقم المحل
+      const tenant = findTenantByShopNumber(shopNumber);
+      
+      if (!tenant) {
+        alert('لم يتم العثور على بيانات المستأجر');
+        return;
+      }
+      
+      currentTenant = tenant;
+      
+      // التبديل إلى تبويب الواصل المالي
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      const paymentsTab = document.querySelector('[data-tab="payments"]');
+      const paymentsContent = document.getElementById('payments');
+      
+      if (paymentsTab && paymentsContent) {
+        paymentsTab.classList.add('active');
+        paymentsContent.classList.add('active');
+      }
+      
+      // تحديث بيانات الواصل المالي
+      document.getElementById('paymentShopNumber').textContent = tenant['رقم المحل'] || '';
+      document.getElementById('paymentTenantName').textContent = tenant['المستاجر '] || '';
+      
+      // إنشاء الجدول الزمني للدفعات
+      const timeline = document.getElementById('paymentTimeline');
+      if (timeline) {
+        timeline.innerHTML = '';
+        
+        // محاكاة بيانات الدفعات
+        const payments = generatePayments(tenant);
+        
+        payments.forEach(payment => {
+          const event = document.createElement('div');
+          event.className = 'payment-event';
+          event.innerHTML = `
+            <div class="payment-date">${payment.date}</div>
+            <div class="payment-details">
+              <span>${payment.description}</span>
+              <span class="payment-amount">${payment.amount.toLocaleString()} د.ل</span>
+            </div>
+          `;
+          timeline.appendChild(event);
+        });
+        
+        // تحديث الإجمالي والمتبقي
+        const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
+        const contractAdvance = parseFloat(tenant['مقدم العقد'] || 0);
+        const remaining = contractAdvance - totalPaid;
+        
+        document.getElementById('totalPaid').textContent = `${totalPaid.toLocaleString()} د.ل`;
+        document.getElementById('remainingAmount').textContent = `${remaining.toLocaleString()} د.ل`;
+        
+        // تحديث حالة الدفع
+        const statusElement = document.getElementById('paymentStatus');
+        if (statusElement) {
+          statusElement.innerHTML = remaining <= 0 
+            ? '<span class="invoice-status status-paid">مكتمل</span>' 
+            : '<span class="invoice-status status-pending">غير مكتمل</span>';
+        }
+      }
+    }
+
+    // توليد بيانات الدفعات (محاكاة)
+    function generatePayments(tenant) {
+      const payments = [];
+      const paidAmount = parseFloat(tenant['القيمة المدفوعة '] || 0);
+      const contractAdvance = parseFloat(tenant['مقدم العقد'] || 0);
+      const lastPaymentDate = tenant['تاريخ اخر سداد'];
+      
+      // دفع مقدم العقد (إن وجد)
+      if (contractAdvance > 0) {
+        payments.push({
+          date: tenant['تاريخ بداية العقد'] || '2021-06-01',
+          amount: contractAdvance,
+          description: 'مقدم العقد'
+        });
+      }
+      
+      // إذا كان هناك مدفوعات إضافية
+      if (paidAmount > contractAdvance) {
+        const additionalPayments = paidAmount - contractAdvance;
+        payments.push({
+          date: lastPaymentDate || '2024-12-31',
+          amount: additionalPayments,
+          description: 'دفعات إضافية'
+        });
+      }
+      
+      return payments;
+    }
+
+    // طباعة الواصل
+    function printReceipt() {
+      if (!currentTenant) {
+        alert('لم يتم تحديد مستأجر لطباعة الواصل');
+        return;
+      }
+      
+      // تحديث بيانات الواصل
+      document.getElementById('receiptTenantName').textContent = currentTenant['المستاجر '] || '';
+      document.getElementById('receiptShopNumber').textContent = currentTenant['رقم المحل'] || '';
+      
+      const rentAmount = parseFloat(currentTenant['الايجار'] || 0);
+      document.getElementById('receiptRent').textContent = `${rentAmount.toLocaleString()} د.ل`;
+      
+      // حساب المبلغ الإجمالي
+      const paidAmount = parseFloat(currentTenant['القيمة المدفوعة '] || 0);
+      document.getElementById('receiptAmount').textContent = `${paidAmount.toLocaleString()} د.ل`;
+      
+      // تعيين رقم الواصل عشوائي
+      document.getElementById('receiptNumber').textContent = `R-${Math.floor(100000 + Math.random() * 900000)}`;
+      
+      // تعيين فترة الدفع (محاكاة)
+      const startDate = new Date(currentTenant['تاريخ بداية العقد'] || '2021-06-01');
+      const endDate = new Date(startDate);
+      endDate.setMonth(startDate.getMonth() + Math.floor(paidAmount / rentAmount));
+      
+      document.getElementById('receiptPeriod').textContent = 
+        `من ${formatDate(startDate)} إلى ${formatDate(endDate)}`;
+      
+      // طباعة الواصل
+      window.print();
+    }
+
+    // تعيين تاريخ اليوم في الواصل
+    function setReceiptDate() {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      const receiptDateEl = document.getElementById('receiptDate');
+      if (receiptDateEl) {
+        receiptDateEl.textContent = formattedDate;
+      }
+    }
+
+    // تصدير إلى Excel
     function exportToExcel() {
-      // إنشاء بيانات للتصدير
-      const dataForExport = tenantsData.map(shop => ({
-        'رقم المحل': shop.id,
-        'المرحلة': shop.phase,
-        'اسم المستأجر': shop.name,
-        'قيمة الإيجار': shop.rent || 0,
-        'حالة الدفع': shop.status === 'paid' ? 'مسدد' : (shop.status === 'unpaid' ? 'غير مسدد' : 'قيد المراجعة'),
-        'آخر سداد': shop.lastPayment || 'غير متوفر',
-        'المساحة': shop.area || 0
-      }));
-      
-      // إنشاء ورقة عمل
-      const ws = XLSX.utils.json_to_sheet(dataForExport);
-      
-      // إنشاء مصنف وإضافة الورقة
+      // إنشاء workbook جديد
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'المحلات');
+      
+      // تحويل البيانات إلى worksheet
+      const ws = XLSX.utils.json_to_sheet(allTenantsData);
+      
+      // إضافة worksheet إلى workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'بيانات المستأجرين');
       
       // تصدير الملف
-      XLSX.writeFile(wb, 'تقرير_المحلات.xlsx');
+      XLSX.writeFile(wb, 'بيانات_المستأجرين.xlsx');
+      
+      alert('تم تصدير البيانات إلى Excel بنجاح');
     }
+
+    // تحديث البيانات
+    function refreshData() {
+      fetchDataFromGitHub();
+    }
+
+    // تهيئة تاريخ الواصل عند التحميل
+    setReceiptDate();
   </script>
 </body>
 </html>
