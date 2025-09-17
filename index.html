@@ -440,7 +440,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -509,7 +509,7 @@
 <body>
   <div class="loading-indicator" id="loadingIndicator">
     <div class="loading-spinner"></div>
-    <p style="margin-top: 20px;">جاري تحميل البيانات...</p>
+    <p style="margin-top: 20px; font-weight: bold;">جاري تحميل البيانات من GitHub...</p>
   </div>
 
   <div class="container" style="display: none;" id="mainContent">
@@ -551,8 +551,8 @@
             <div class="card-label">إجمالي المحلات</div>
             <div class="card-icon"><i class="fas fa-store"></i></div>
           </div>
-          <div class="card-value">64</div>
-          <div class="card-change">من أصل 80 محل</div>
+          <div class="card-value" id="totalShops">0</div>
+          <div class="card-change">من أصل <span id="totalShopsPlanned">0</span> محل</div>
         </div>
         
         <div class="card success">
@@ -560,8 +560,8 @@
             <div class="card-label">المحلات المستوفية</div>
             <div class="card-icon"><i class="fas fa-check-circle"></i></div>
           </div>
-          <div class="card-value">64</div>
-          <div class="card-change positive">100%</div>
+          <div class="card-value" id="completedShops">0</div>
+          <div class="card-change positive" id="completedPercentage">0%</div>
         </div>
         
         <div class="card warning">
@@ -569,7 +569,7 @@
             <div class="card-label">المحلات غير المستوفية</div>
             <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
           </div>
-          <div class="card-value">19</div>
+          <div class="card-value" id="notCompletedShops">0</div>
           <div class="card-change">تحت المراجعة</div>
         </div>
         
@@ -578,7 +578,7 @@
             <div class="card-label">إجمالي الإيرادات</div>
             <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          <div class="card-value">97,500</div>
+          <div class="card-value" id="totalRevenue">0</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
@@ -587,7 +587,7 @@
             <div class="card-label">متوسط الإيجار الشهري</div>
             <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
           </div>
-          <div class="card-value">1,218</div>
+          <div class="card-value" id="avgRent">0</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
@@ -596,7 +596,7 @@
             <div class="card-label">صافي الربح</div>
             <div class="card-icon"><i class="fas fa-chart-line"></i></div>
           </div>
-          <div class="card-value">55,200</div>
+          <div class="card-value" id="netProfit">0</div>
           <div class="card-change positive">دينار ليبي</div>
         </div>
       </div>
@@ -619,7 +619,7 @@
           <div class="table-actions">
             <div class="search-box">
               <i class="fas fa-search search-icon"></i>
-              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر...">
+              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر..." oninput="filterShopsTable(this.value)">
             </div>
             <button class="filter-btn">
               <i class="fas fa-filter"></i> تصفية
@@ -640,7 +640,7 @@
               <th>الإجراءات</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="shopsTableBody">
             <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
@@ -657,8 +657,8 @@
             <div class="card-label">المستأجرين المكتملين</div>
             <div class="card-icon"><i class="fas fa-check-circle"></i></div>
           </div>
-          <div class="card-value">64</div>
-          <div class="card-change positive">80% من إجمالي المستأجرين</div>
+          <div class="card-value" id="completedTenants">0</div>
+          <div class="card-change positive" id="completedTenantsPercentage">0% من إجمالي المستأجرين</div>
         </div>
         
         <div class="card warning">
@@ -666,8 +666,8 @@
             <div class="card-label">المستأجرين غير المكتملين</div>
             <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
           </div>
-          <div class="card-value">19</div>
-          <div class="card-change">20% من إجمالي المستأجرين</div>
+          <div class="card-value" id="notCompletedTenants">0</div>
+          <div class="card-change" id="notCompletedTenantsPercentage">0% من إجمالي المستأجرين</div>
         </div>
         
         <div class="card danger">
@@ -675,8 +675,8 @@
             <div class="card-label">المستأجرين تحت المراجعة</div>
             <div class="card-icon"><i class="fas fa-search"></i></div>
           </div>
-          <div class="card-value">17</div>
-          <div class="card-change">17% من إجمالي المستأجرين</div>
+          <div class="card-value" id="underReviewTenants">0</div>
+          <div class="card-change" id="underReviewTenantsPercentage">0% من إجمالي المستأجرين</div>
         </div>
       </div>
       
@@ -686,7 +686,7 @@
           <div class="table-actions">
             <div class="search-box">
               <i class="fas fa-search search-icon"></i>
-              <input type="text" class="search-input" placeholder="ابحث باسم المستأجر...">
+              <input type="text" class="search-input" placeholder="ابحث باسم المستأجر..." oninput="filterTenantsTable(this.value)">
             </div>
             <button class="filter-btn">
               <i class="fas fa-filter"></i> تصفية
@@ -708,7 +708,7 @@
               <th>الواصل المالي</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tenantsTableBody">
             <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
@@ -720,7 +720,7 @@
       <h2 class="section-title">الواصل المالي</h2>
       
       <div class="payment-container">
-        <h3>السجل المالي للمحل رقم <span id="paymentShopNumber">1</span> - <span id="paymentTenantName">محمد احمد أبو شعالة</span></h3>
+        <h3>السجل المالي للمحل رقم <span id="paymentShopNumber">-</span> - <span id="paymentTenantName">-</span></h3>
         
         <div class="payment-timeline" id="paymentTimeline">
           <!-- سيتم ملء هذا القسم بالبيانات -->
@@ -738,7 +738,7 @@
         
         <div class="summary-item">
           <span class="summary-label">حالة الدفع:</span>
-          <span class="summary-value" id="paymentStatus"><span class="invoice-status status-paid">مكتمل</span></span>
+          <span class="summary-value" id="paymentStatus"><span class="invoice-status status-pending">غير مكتمل</span></span>
         </div>
         
         <div class="payment-actions" style="margin-top: 20px;">
@@ -759,7 +759,7 @@
             <div class="card-label">الإيراد الشهري الحالي</div>
             <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          <div class="card-value">97,500</div>
+          <div class="card-value" id="currentMonthlyRevenue">0</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
@@ -768,7 +768,7 @@
             <div class="card-label">الإيراد الشهري المتوقع بعد الزيادة</div>
             <div class="card-icon"><i class="fas fa-chart-line"></i></div>
           </div>
-          <div class="card-value">195,000</div>
+          <div class="card-value" id="predictedMonthlyRevenue">0</div>
           <div class="card-change positive">دينار ليبي</div>
         </div>
         
@@ -777,7 +777,7 @@
             <div class="card-label">الزيادة السنوية المتوقعة</div>
             <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
           </div>
-          <div class="card-value">1,170,000</div>
+          <div class="card-value" id="predictedYearlyIncrease">0</div>
           <div class="card-change positive">دينار ليبي</div>
         </div>
       </div>
@@ -797,28 +797,8 @@
               <th>الفرق</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>المرحلة 1</td>
-              <td>50</td>
-              <td>60,000 د.ل</td>
-              <td>120,000 د.ل</td>
-              <td style="color: var(--success-color); font-weight: 600;">+60,000 د.ل</td>
-            </tr>
-            <tr>
-              <td>المرحلة 2</td>
-              <td>50</td>
-              <td>37,500 د.ل</td>
-              <td>75,000 د.ل</td>
-              <td style="color: var(--success-color); font-weight: 600;">+37,500 د.ل</td>
-            </tr>
-            <tr>
-              <td>المجموع</td>
-              <td>100</td>
-              <td>97,500 د.ل</td>
-              <td>195,000 د.ل</td>
-              <td style="color: var(--success-color); font-weight: 600;">+97,500 د.ل</td>
-            </tr>
+          <tbody id="predictionTableBody">
+            <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
       </div>
@@ -841,7 +821,7 @@
             <div class="card-label">إجمالي الإيرادات السنوية</div>
             <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
           </div>
-          <div class="card-value">1,170,000</div>
+          <div class="card-value" id="yearlyRevenue">0</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
@@ -850,7 +830,7 @@
             <div class="card-label">إجمالي المحلات</div>
             <div class="card-icon"><i class="fas fa-store"></i></div>
           </div>
-          <div class="card-value">80</div>
+          <div class="card-value" id="yearlyTotalShops">0</div>
           <div class="card-change">محل</div>
         </div>
         
@@ -859,7 +839,7 @@
             <div class="card-label">متوسط الإيجار الشهري</div>
             <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
           </div>
-          <div class="card-value">1,218</div>
+          <div class="card-value" id="yearlyAvgRent">0</div>
           <div class="card-change">دينار ليبي</div>
         </div>
         
@@ -868,18 +848,18 @@
             <div class="card-label">نسبة الإشغال</div>
             <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
           </div>
-          <div class="card-value">81.25%</div>
-          <div class="card-change positive">65 من 80 محل</div>
+          <div class="card-value" id="occupancyRate">0%</div>
+          <div class="card-change positive" id="occupiedShopsText">0 من 0 محل</div>
         </div>
       </div>
       
       <div class="table-container">
         <div class="table-header">
-          <h3 class="table-title">التقرير السنوي 2024</h3>
+          <h3 class="table-title">التقرير السنوي <span id="currentYear"></span></h3>
           <div class="table-actions">
             <div class="search-box">
               <i class="fas fa-search search-icon"></i>
-              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر...">
+              <input type="text" class="search-input" placeholder="ابحث برقم المحل أو اسم المستأجر..." oninput="filterAnnualTable(this.value)">
             </div>
             <button class="filter-btn">
               <i class="fas fa-filter"></i> تصفية
@@ -901,7 +881,7 @@
               <th>الواصل</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="annualTableBody">
             <!-- سيتم ملء هذا القسم بالبيانات -->
           </tbody>
         </table>
@@ -926,19 +906,19 @@
         </div>
         <div class="receipt-item">
           <span>اسم المستأجر:</span>
-          <span id="receiptTenantName">محمد احمد أبو شعالة</span>
+          <span id="receiptTenantName">-</span>
         </div>
         <div class="receipt-item">
           <span>رقم المحل:</span>
-          <span id="receiptShopNumber">1</span>
+          <span id="receiptShopNumber">-</span>
         </div>
         <div class="receipt-item">
           <span>قيمة الإيجار الشهري:</span>
-          <span id="receiptRent">1,500 د.ل</span>
+          <span id="receiptRent">0 د.ل</span>
         </div>
         <div class="receipt-item">
           <span>المبلغ المدفوع:</span>
-          <span id="receiptAmount">10,500 د.ل</span>
+          <span id="receiptAmount">0 د.ل</span>
         </div>
         <div class="receipt-item">
           <span>طريقة الدفع:</span>
@@ -946,7 +926,7 @@
         </div>
         <div class="receipt-item">
           <span>الفترة:</span>
-          <span id="receiptPeriod">من 01/01/2025 إلى 30/07/2025</span>
+          <span id="receiptPeriod">من - إلى -</span>
         </div>
       </div>
       
@@ -977,26 +957,37 @@
       // تحديث عدد التنبيهات غير المقروءة
       updateNotificationBadge();
       
+      // تعيين السنة الحالية
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+      
       // جلب البيانات من GitHub
       fetchDataFromGitHub();
     });
 
-    // جلب البيانات من GitHub
+    // جلب البيانات من GitHub باستخدام RawGit CDN
     async function fetchDataFromGitHub() {
       try {
         showLoadingIndicator();
         
-        // استخدام CORS proxy لتجنب مشاكل CORS
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const targetUrl = 'https://raw.githubusercontent.com/alahlisc/Investment-project/main/tenants_data2025.json';
+        // استخدام RawGit CDN للوصول إلى الملف
+        const rawGitUrl = 'https://cdn.jsdelivr.net/gh/alahlisc/Investment-project@main/tenants_data2025.json';
         
-        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+        // إضافة timestamp لمنع التخزين المؤقت
+        const timestamp = new Date().getTime();
+        const urlWithTimestamp = `${rawGitUrl}?t=${timestamp}`;
+        
+        const response = await fetch(urlWithTimestamp);
         
         if (!response.ok) {
-          throw new Error('فشل في جلب البيانات من GitHub');
+          throw new Error(`فشل في جلب البيانات: ${response.status} ${response.statusText}`);
         }
         
         const data = await response.json();
+        
+        if (!data || data.length === 0) {
+          throw new Error('البيانات المستلمة فارغة أو غير صحيحة');
+        }
+        
         allTenantsData = data;
         
         // تصنيف البيانات
@@ -1005,13 +996,20 @@
         // تحديث الواجهة بالبيانات الجديدة
         updateDashboard(data);
         createCharts();
+        updatePredictionData();
         
         hideLoadingIndicator();
         document.getElementById('mainContent').style.display = 'block';
+        
+        console.log('تم جلب البيانات بنجاح من GitHub:', data.length, 'سجل');
+        
       } catch (error) {
         console.error('Error:', error);
         hideLoadingIndicator();
-        alert('حدث خطأ أثناء جلب البيانات: ' + error.message + '. جاري تحميل بيانات تجريبية...');
+        
+        // عرض رسالة الخطأ للمستخدم
+        const errorMessage = `حدث خطأ أثناء جلب البيانات: ${error.message}. جاري تحميل بيانات تجريبية...`;
+        alert(errorMessage);
         
         // تحميل بيانات تجريبية في حالة فشل جلب البيانات
         loadSampleData();
@@ -1033,10 +1031,10 @@
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2024-12-02",
           "الباقي": 0,
-          "تاريخ بداية العقد": "2021-06-01 00:00:00",
-          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
-          "ملاحظات": "مستوفي مع تعديل العقد ",
-          "القيمة المدفوعة ": 4500,
+          "تاريخ بداية العقد": "2021-06-01",
+          "تاريخ نهاية العقد": "2041-05-31",
+          "ملاحظات": "مستوفي مع تعديل العقد",
+          "القيمة المدفوعة ": 60000,
           "رقم الايصال": 1143,
           "اتباث الهوية": 393715,
           "رقم االهاتف": ""
@@ -1052,10 +1050,10 @@
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2025-02-28",
           "الباقي": 0,
-          "تاريخ بداية العقد": "2021-06-01 00:00:00",
-          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
-          "ملاحظات": "مستوفي دافع حتي سنة  2025",
-          "القيمة المدفوعة ": 9000,
+          "تاريخ بداية العقد": "2021-06-01",
+          "تاريخ نهاية العقد": "2041-05-31",
+          "ملاحظات": "مستوفي دافع حتي سنة 2025",
+          "القيمة المدفوعة ": 60000,
           "رقم الايصال": 1108,
           "اتباث الهوية": 420396,
           "رقم االهاتف": 913186304
@@ -1071,13 +1069,51 @@
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2024-12-31",
           "الباقي": 0,
-          "تاريخ بداية العقد": "2021-06-01 00:00:00",
-          "تاريخ نهاية العقد": "2041-05-31 00:00:00",
-          "ملاحظات": "مستوفي مع تعديل العقد ",
-          "القيمة المدفوعة ": 4500,
+          "تاريخ بداية العقد": "2021-06-01",
+          "تاريخ نهاية العقد": "2041-05-31",
+          "ملاحظات": "مستوفي مع تعديل العقد",
+          "القيمة المدفوعة ": 60000,
           "رقم الايصال": 1144,
           "اتباث الهوية": "cfyznlk2",
           "رقم االهاتف": ""
+        },
+        {
+          "Unnamed: 0": 4,
+          "المستاجر ": "معز المنير محمد التريكي",
+          "المرحلة": 1,
+          "الدور": 0,
+          "رقم المحل": 4,
+          "الايجار": 1500,
+          "مقدم العقد": 60000,
+          "Unnamed: 7": 20000,
+          "تاريخ اخر سداد": "2024-12-31",
+          "الباقي": 0,
+          "تاريخ بداية العقد": "2021-06-01",
+          "تاريخ نهاية العقد": "2041-05-31",
+          "ملاحظات": "مستوفي مع تعديل العقد",
+          "القيمة المدفوعة ": 60000,
+          "رقم الايصال": 1145,
+          "اتباث الهوية": 412345,
+          "رقم االهاتف": "912345678"
+        },
+        {
+          "Unnamed: 0": 5,
+          "المستاجر ": "حسين ابوبكر العزابي",
+          "المرحلة": 1,
+          "الدور": 0,
+          "رقم المحل": 6,
+          "الايجار": 1500,
+          "mقدم العقد": 60000,
+          "Unnamed: 7": 20000,
+          "تاريخ اخر سداد": "2024-12-31",
+          "الباقي": 30000,
+          "تاريخ بداية العقد": "2021-06-01",
+          "تاريخ نهاية العقد": "2041-05-31",
+          "ملاحظات": "غير مكتمل الدفع",
+          "القيمة المدفوعة ": 30000,
+          "رقم الايصال": 1146,
+          "اتباث الهوية": 423456,
+          "رقم االهاتف": "923456789"
         }
       ];
       
@@ -1085,6 +1121,9 @@
       classifyTenants(sampleData);
       updateDashboard(sampleData);
       createCharts();
+      updatePredictionData();
+      
+      console.log('تم تحميل البيانات التجريبية:', sampleData.length, 'سجل');
     }
 
     // عرض مؤشر التحميل
@@ -1131,6 +1170,7 @@
       const completedShops = tenantsData.complete.length;
       const notCompletedShops = tenantsData.not_completed.length;
       const underReviewShops = tenantsData.legal_review.length;
+      const completedPercentage = totalShops > 0 ? Math.round((completedShops / totalShops) * 100) : 0;
       
       // حساب الإيرادات
       let totalRevenue = 0;
@@ -1144,19 +1184,42 @@
         totalPaid += paid;
       });
       
-      const avgRent = totalRevenue / totalShops;
-      const netProfit = totalPaid * 0.8; // افتراض صافي ربح 80%
+      const avgRent = totalShops > 0 ? Math.round(totalRevenue / totalShops) : 0;
+      const netProfit = Math.round(totalPaid * 0.8); // افتراض صافي ربح 80%
       
       // تحديث بطاقات الإحصائيات
-      const cardValues = document.querySelectorAll('.card-value');
-      if (cardValues.length >= 6) {
-        cardValues[0].textContent = totalShops;
-        cardValues[1].textContent = completedShops;
-        cardValues[2].textContent = notCompletedShops;
-        cardValues[3].textContent = totalRevenue.toLocaleString();
-        cardValues[4].textContent = avgRent.toFixed(0);
-        cardValues[5].textContent = netProfit.toLocaleString();
-      }
+      document.getElementById('totalShops').textContent = totalShops;
+      document.getElementById('totalShopsPlanned').textContent = Math.max(80, totalShops); // إذا كان العدد أقل من 80 نعرض 80
+      document.getElementById('completedShops').textContent = completedShops;
+      document.getElementById('completedPercentage').textContent = `${completedPercentage}%`;
+      document.getElementById('notCompletedShops').textContent = notCompletedShops;
+      document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString();
+      document.getElementById('avgRent').textContent = avgRent.toLocaleString();
+      document.getElementById('netProfit').textContent = netProfit.toLocaleString();
+      
+      // تحديث إحصائيات المستأجرين
+      const totalTenants = totalShops;
+      const completedTenantsPercentage = totalTenants > 0 ? Math.round((completedShops / totalTenants) * 100) : 0;
+      const notCompletedTenantsPercentage = totalTenants > 0 ? Math.round((notCompletedShops / totalTenants) * 100) : 0;
+      const underReviewTenantsPercentage = totalTenants > 0 ? Math.round((underReviewShops / totalTenants) * 100) : 0;
+      
+      document.getElementById('completedTenants').textContent = completedShops;
+      document.getElementById('completedTenantsPercentage').textContent = `${completedTenantsPercentage}% من إجمالي المستأجرين`;
+      document.getElementById('notCompletedTenants').textContent = notCompletedShops;
+      document.getElementById('notCompletedTenantsPercentage').textContent = `${notCompletedTenantsPercentage}% من إجمالي المستأجرين`;
+      document.getElementById('underReviewTenants').textContent = underReviewShops;
+      document.getElementById('underReviewTenantsPercentage').textContent = `${underReviewTenantsPercentage}% من إجمالي المستأجرين`;
+      
+      // تحديث إحصائيات الجرد السنوي
+      const yearlyRevenue = totalRevenue * 12;
+      const occupiedShops = totalShops;
+      const occupancyRate = Math.round((occupiedShops / 80) * 100);
+      
+      document.getElementById('yearlyRevenue').textContent = yearlyRevenue.toLocaleString();
+      document.getElementById('yearlyTotalShops').textContent = totalShops;
+      document.getElementById('yearlyAvgRent').textContent = avgRent.toLocaleString();
+      document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
+      document.getElementById('occupiedShopsText').textContent = `${occupiedShops} من 80 محل`;
       
       // تحديث جداول البيانات
       updateShopsTable(data);
@@ -1166,7 +1229,7 @@
 
     // تحديث جدول المحلات
     function updateShopsTable(data) {
-      const tableBody = document.querySelector('#shops table tbody');
+      const tableBody = document.getElementById('shopsTableBody');
       if (!tableBody) return;
       
       tableBody.innerHTML = '';
@@ -1204,19 +1267,30 @@
       });
     }
 
-    // تحويل رقم الدور إلى اسم
-    function getFloorName(floorNumber) {
-      switch(parseInt(floorNumber)) {
-        case 0: return 'الأرضي';
-        case 1: return 'الأول';
-        case 2: return 'الثاني';
-        default: return floorNumber;
+    // تصفية جدول المحلات
+    function filterShopsTable(searchTerm) {
+      const tableBody = document.getElementById('shopsTableBody');
+      const rows = tableBody.getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          const cellText = cells[j].textContent || cells[j].innerText;
+          if (cellText.toLowerCase().includes(searchTerm.toLowerCase())) {
+            found = true;
+            break;
+          }
+        }
+        
+        rows[i].style.display = found ? '' : 'none';
       }
     }
 
     // تحديث جدول المستأجرين
     function updateTenantsTable() {
-      const tableBody = document.querySelector('#tenants table tbody');
+      const tableBody = document.getElementById('tenantsTableBody');
       if (!tableBody) return;
       
       tableBody.innerHTML = '';
@@ -1240,9 +1314,30 @@
       });
     }
 
+    // تصفية جدول المستأجرين
+    function filterTenantsTable(searchTerm) {
+      const tableBody = document.getElementById('tenantsTableBody');
+      const rows = tableBody.getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          const cellText = cells[j].textContent || cells[j].innerText;
+          if (cellText.toLowerCase().includes(searchTerm.toLowerCase())) {
+            found = true;
+            break;
+          }
+        }
+        
+        rows[i].style.display = found ? '' : 'none';
+      }
+    }
+
     // تحديث جدول التقرير السنوي
     function updateAnnualReportTable(data) {
-      const tableBody = document.querySelector('#annual table tbody');
+      const tableBody = document.getElementById('annualTableBody');
       if (!tableBody) return;
       
       tableBody.innerHTML = '';
@@ -1282,6 +1377,93 @@
       });
     }
 
+    // تصفية جدول التقرير السنوي
+    function filterAnnualTable(searchTerm) {
+      const tableBody = document.getElementById('annualTableBody');
+      const rows = tableBody.getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          const cellText = cells[j].textContent || cells[j].innerText;
+          if (cellText.toLowerCase().includes(searchTerm.toLowerCase())) {
+            found = true;
+            break;
+          }
+        }
+        
+        rows[i].style.display = found ? '' : 'none';
+      }
+    }
+
+    // تحديث بيانات التنبؤ
+    function updatePredictionData() {
+      // حساب الإيرادات الحالية
+      let currentMonthlyRevenue = 0;
+      let phase1Shops = 0;
+      let phase2Shops = 0;
+      
+      allTenantsData.forEach(tenant => {
+        const rent = parseFloat(tenant['الايجار'] || 0);
+        currentMonthlyRevenue += rent;
+        
+        if (parseInt(tenant['المرحلة']) === 1) {
+          phase1Shops++;
+        } else if (parseInt(tenant['المرحلة']) === 2) {
+          phase2Shops++;
+        }
+      });
+      
+      // حساب الإيرادات المتوقعة بعد الزيادة
+      const predictedMonthlyRevenue = currentMonthlyRevenue * 2;
+      const predictedYearlyIncrease = predictedMonthlyRevenue * 12;
+      
+      // تحديث البطاقات
+      document.getElementById('currentMonthlyRevenue').textContent = currentMonthlyRevenue.toLocaleString();
+      document.getElementById('predictedMonthlyRevenue').textContent = predictedMonthlyRevenue.toLocaleString();
+      document.getElementById('predictedYearlyIncrease').textContent = predictedYearlyIncrease.toLocaleString();
+      
+      // تحديث جدول التنبؤ
+      const tableBody = document.getElementById('predictionTableBody');
+      if (tableBody) {
+        tableBody.innerHTML = `
+          <tr>
+            <td>المرحلة 1</td>
+            <td>${phase1Shops}</td>
+            <td>${(currentMonthlyRevenue / 2).toLocaleString()} د.ل</td>
+            <td>${currentMonthlyRevenue.toLocaleString()} د.ل</td>
+            <td style="color: var(--success-color); font-weight: 600;">+${(currentMonthlyRevenue / 2).toLocaleString()} د.ل</td>
+          </tr>
+          <tr>
+            <td>المرحلة 2</td>
+            <td>${phase2Shops}</td>
+            <td>${(currentMonthlyRevenue / 2).toLocaleString()} د.ل</td>
+            <td>${currentMonthlyRevenue.toLocaleString()} د.ل</td>
+            <td style="color: var(--success-color); font-weight: 600;">+${(currentMonthlyRevenue / 2).toLocaleString()} د.ل</td>
+          </tr>
+          <tr>
+            <td>المجموع</td>
+            <td>${phase1Shops + phase2Shops}</td>
+            <td>${currentMonthlyRevenue.toLocaleString()} د.ل</td>
+            <td>${predictedMonthlyRevenue.toLocaleString()} د.ل</td>
+            <td style="color: var(--success-color); font-weight: 600;">+${currentMonthlyRevenue.toLocaleString()} د.ل</td>
+          </tr>
+        `;
+      }
+    }
+
+    // تحويل رقم الدور إلى اسم
+    function getFloorName(floorNumber) {
+      switch(parseInt(floorNumber)) {
+        case 0: return 'الأرضي';
+        case 1: return 'الأول';
+        case 2: return 'الثاني';
+        default: return floorNumber;
+      }
+    }
+
     // تنسيق التاريخ
     function formatDate(dateString) {
       if (!dateString) return 'غير محدد';
@@ -1312,7 +1494,10 @@
           // إضافة النشاط إلى علامة التبويب المحددة
           this.classList.add('active');
           const tabId = this.getAttribute('data-tab');
-          document.getElementById(tabId).classList.add('active');
+          const tabContent = document.getElementById(tabId);
+          if (tabContent) {
+            tabContent.classList.add('active');
+          }
         });
       });
     }
@@ -1365,20 +1550,23 @@
       // رسم بياني للتحليلات التنبؤية
       const predictionCtx = document.getElementById('predictionChart');
       if (predictionCtx) {
+        // حساب الإيرادات الحالية والمتوقعة
+        let currentRevenue = 0;
+        allTenantsData.forEach(tenant => {
+          currentRevenue += parseFloat(tenant['الايجار'] || 0);
+        });
+        
+        const predictedRevenue = currentRevenue * 2;
+        
         new Chart(predictionCtx.getContext('2d'), {
           type: 'bar',
           data: {
-            labels: ['المرحلة 1', 'المرحلة 2', 'المجموع'],
+            labels: ['الإيرادات الحالية', 'الإيرادات المتوقعة'],
             datasets: [
               {
-                label: 'الإيراد الحالي',
-                data: [60000, 37500, 97500],
-                backgroundColor: 'rgba(0, 100, 0, 0.7)',
-              },
-              {
-                label: 'الإيراد بعد الزيادة',
-                data: [120000, 75000, 195000],
-                backgroundColor: 'rgba(10, 61, 98, 0.7)',
+                label: 'الإيرادات الشهرية',
+                data: [currentRevenue, predictedRevenue],
+                backgroundColor: ['rgba(0, 100, 0, 0.7)', 'rgba(10, 61, 98, 0.7)'],
               }
             ]
           },
@@ -1487,7 +1675,7 @@
       // دفع مقدم العقد (إن وجد)
       if (contractAdvance > 0) {
         payments.push({
-          date: tenant['تاريخ بداية العقد'] || '2021-06-01',
+          date: formatDate(tenant['تاريخ بداية العقد']) || '2021-06-01',
           amount: contractAdvance,
           description: 'مقدم العقد'
         });
@@ -1497,9 +1685,15 @@
       if (paidAmount > contractAdvance) {
         const additionalPayments = paidAmount - contractAdvance;
         payments.push({
-          date: lastPaymentDate || '2024-12-31',
+          date: formatDate(lastPaymentDate) || '2024-12-31',
           amount: additionalPayments,
           description: 'دفعات إضافية'
+        });
+      } else if (paidAmount > 0 && paidAmount < contractAdvance) {
+        payments.push({
+          date: formatDate(lastPaymentDate) || '2024-12-31',
+          amount: paidAmount,
+          description: 'دفعة جزئية'
         });
       }
       
@@ -1530,7 +1724,8 @@
       // تعيين فترة الدفع (محاكاة)
       const startDate = new Date(currentTenant['تاريخ بداية العقد'] || '2021-06-01');
       const endDate = new Date(startDate);
-      endDate.setMonth(startDate.getMonth() + Math.floor(paidAmount / rentAmount));
+      const monthsPaid = Math.floor(paidAmount / rentAmount);
+      endDate.setMonth(startDate.getMonth() + monthsPaid);
       
       document.getElementById('receiptPeriod').textContent = 
         `من ${formatDate(startDate)} إلى ${formatDate(endDate)}`;
@@ -1556,19 +1751,29 @@
 
     // تصدير إلى Excel
     function exportToExcel() {
-      // إنشاء workbook جديد
-      const wb = XLSX.utils.book_new();
+      if (allTenantsData.length === 0) {
+        alert('لا توجد بيانات للتصدير');
+        return;
+      }
       
-      // تحويل البيانات إلى worksheet
-      const ws = XLSX.utils.json_to_sheet(allTenantsData);
-      
-      // إضافة worksheet إلى workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'بيانات المستأجرين');
-      
-      // تصدير الملف
-      XLSX.writeFile(wb, 'بيانات_المستأجرين.xlsx');
-      
-      alert('تم تصدير البيانات إلى Excel بنجاح');
+      try {
+        // إنشاء workbook جديد
+        const wb = XLSX.utils.book_new();
+        
+        // تحويل البيانات إلى worksheet
+        const ws = XLSX.utils.json_to_sheet(allTenantsData);
+        
+        // إضافة worksheet إلى workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'بيانات المستأجرين');
+        
+        // تصدير الملف
+        XLSX.writeFile(wb, 'بيانات_المستأجرين.xlsx');
+        
+        alert('تم تصدير البيانات إلى Excel بنجاح');
+      } catch (error) {
+        console.error('Error exporting to Excel:', error);
+        alert('حدث خطأ أثناء التصدير إلى Excel');
+      }
     }
 
     // تحديث البيانات
