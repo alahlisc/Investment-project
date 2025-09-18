@@ -127,28 +127,12 @@
   </div>
 
   <script>
-    // روابط JSON (استبدل بروابط raw GitHub)
-    const fullURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/كامل_الالتزام_التعاقد_.json";
-    const reviewURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/المراجعة_القانونية.json";
-    const obligationURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/الالتزام.json";
+    // روابط JSON
+    const fullURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/commitments.json";
+    const reviewURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/reviews.json";
+    const obligationURL = "https://raw.githubusercontent.com/alahlisc/Investment-project/main/obligations.json";
 
     async function fetchData(url){ let r=await fetch(url); return await r.json(); }
-
-    function fillTable(tbodyId,data,statusClass,statusText){
-      const tbody=document.getElementById(tbodyId);
-      tbody.innerHTML="";
-      data.forEach(item=>{
-        tbody.innerHTML+=`<tr>
-          <td>${item["رقم المحل"]||"-"}</td>
-          <td>${item["المرحلة"]||"-"}</td>
-          <td>${item["الدور"]||"-"}</td>
-          <td>${item["المستاجر "]||"-"}</td>
-          <td>${item["الايجار"]||"-"}</td>
-          <td>${item["تاريخ اخر سداد"]||"-"}</td>
-          <td><span class="invoice-status ${statusClass}">${statusText}</span></td>
-        </tr>`;
-      });
-    }
 
     async function loadAll(){
       window.fullData=await fetchData(fullURL);
