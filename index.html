@@ -904,7 +904,7 @@
           <span>التاريخ:</span>
           <span id="receiptDate"></span>
         </div>
-        <div class="receuitem">
+        <div class="receipt-item">
           <span>اسم المستأجر:</span>
           <span id="receiptTenantName">-</span>
         </div>
@@ -1075,7 +1075,7 @@
           "القيمة المدفوعة ": 60000,
           "رقم الايصال": 1144,
           "اتباث الهوية": "cfyznlk2",
-          "رقم االهاتف": ""
+          "رقم االهاتf": ""
         },
         {
           "Unnamed: 0": 4,
@@ -1087,7 +1087,7 @@
           "مقدم العقد": 60000,
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2024-12-31",
-          "الباقي": 0,
+          "الباقi": 0,
           "تاريخ بداية العقد": "2021-06-01",
           "تاريخ نهاية العقد": "2041-05-31",
           "ملاحظات": "مستوفي مع تعديل العقد",
@@ -1103,10 +1103,10 @@
           "الدور": 0,
           "رقم المحل": 6,
           "الايجار": 1500,
-          "mقدم العقد": 60000,
+          "مقدم العقد": 60000,
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2024-12-31",
-          "الباقi": 30000,
+          "الباقي": 30000,
           "تاريخ بداية العقد": "2021-06-01",
           "تاريخ نهاية العقد": "2041-05-31",
           "ملاحظات": "غير مكتمل الدفع",
@@ -1709,7 +1709,7 @@
       
       // تحديث بيانات الواصل
       document.getElementById('receiptTenantName').textContent = currentTenant['المستاجر '] || '';
-      document.getElementById('receuitShopNumber').textContent = currentTenant['رقم المحل'] || '';
+      document.getElementById('receiptShopNumber').textContent = currentTenant['رقم المحل'] || '';
       
       const rentAmount = parseFloat(currentTenant['الايجار'] || 0);
       document.getElementById('receiptRent').textContent = `${rentAmount.toLocaleString()} د.ل`;
