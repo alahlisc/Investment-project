@@ -904,7 +904,7 @@
           <span>التاريخ:</span>
           <span id="receiptDate"></span>
         </div>
-        <div class="receipt-item">
+        <div class="receuitem">
           <span>اسم المستأجر:</span>
           <span id="receiptTenantName">-</span>
         </div>
@@ -1106,7 +1106,7 @@
           "mقدم العقد": 60000,
           "Unnamed: 7": 20000,
           "تاريخ اخر سداد": "2024-12-31",
-          "الباقي": 30000,
+          "الباقi": 30000,
           "تاريخ بداية العقد": "2021-06-01",
           "تاريخ نهاية العقد": "2041-05-31",
           "ملاحظات": "غير مكتمل الدفع",
@@ -1709,7 +1709,7 @@
       
       // تحديث بيانات الواصل
       document.getElementById('receiptTenantName').textContent = currentTenant['المستاجر '] || '';
-      document.getElementById('receiptShopNumber').textContent = currentTenant['رقم المحل'] || '';
+      document.getElementById('receuitShopNumber').textContent = currentTenant['رقم المحل'] || '';
       
       const rentAmount = parseFloat(currentTenant['الايجار'] || 0);
       document.getElementById('receiptRent').textContent = `${rentAmount.toLocaleString()} د.ل`;
